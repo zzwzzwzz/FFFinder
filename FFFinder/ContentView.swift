@@ -8,15 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
+	@StateObject private var viewModel = FestivalsViewModel()
+	
+	var body: some View {
+		NavigationStack {
+			List(viewModel.festivals) { festival in
+				NavigationLink(destination: FestivalDetailView(festival: festival)) {
+					VStack(alignment: .leading) {
+						Text(festival.name)
+							.font(.headline)
+						Text(festival.dateRange)
+							.font(.subheadline)
+							.foregroundColor(.secondary)
+					}
+				}
+			}
+			.navigationTitle("Sydney Film Festivals")
+		}
+	}
 }
 
 #Preview {
