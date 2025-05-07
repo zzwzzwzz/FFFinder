@@ -29,12 +29,12 @@ struct ContentView: View {
 				VStack {
 					// Header
 					HStack {
-						Text("SYDNEY")
-							.font(.title2)
-							.fontWeight(.light)
 						Text("FILM FESTIVALS")
 							.font(.title2)
 							.fontWeight(.bold)
+						Text("FINDER")
+							.font(.title2)
+							.fontWeight(.light)
 						Spacer()
 					}
 					.padding(.horizontal)

@@ -106,7 +106,7 @@ struct FestivalDetailView: View {
 							.font(.title2)
 							.fontWeight(.bold)
 						
-						// Placeholder map view 
+						// Placeholder map view
 						ZStack {
 							Rectangle()
 								.fill(Color.gray.opacity(0.2))
