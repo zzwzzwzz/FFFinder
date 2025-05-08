@@ -47,7 +47,7 @@ struct SearchView: View {
 					// Search field
 					HStack {
 						Image(systemName: "magnifyingglass")
-							.foregroundColor(AppColors.primary)
+							.foregroundColor(AppColors.main)
 						TextField("Search festivals", text: $searchText)
 							.font(.body)
 						
@@ -56,7 +56,7 @@ struct SearchView: View {
 								searchText = ""
 							} label: {
 								Image(systemName: "xmark.circle.fill")
-									.foregroundColor(AppColors.primary)
+									.foregroundColor(AppColors.main)
 							}
 						}
 					}
@@ -65,7 +65,7 @@ struct SearchView: View {
 					.cornerRadius(10)
 					.overlay(
 						RoundedRectangle(cornerRadius: 10)
-							.stroke(AppColors.primary.opacity(0.3), lineWidth: 1)
+							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
 					)
 					.padding(.horizontal)
 					
@@ -80,10 +80,10 @@ struct SearchView: View {
 									.padding(.vertical, 8)
 									.background(
 										selectedGenre == nil ?
-										AppColors.primary : AppColors.background
+										AppColors.main : AppColors.background
 									)
 									.foregroundColor(
-										selectedGenre == nil ? .white : AppColors.primary
+										selectedGenre == nil ? .white : AppColors.main
 									)
 									.cornerRadius(20)
 							}
@@ -101,10 +101,10 @@ struct SearchView: View {
 										.padding(.vertical, 8)
 										.background(
 											selectedGenre == genre ?
-											AppColors.primary : AppColors.background
+											AppColors.main : AppColors.background
 										)
 										.foregroundColor(
-											selectedGenre == genre ? .white : AppColors.primary
+											selectedGenre == genre ? .white : AppColors.main
 										)
 										.cornerRadius(20)
 								}

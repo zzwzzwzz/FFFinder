@@ -56,7 +56,7 @@ struct AllFestivalsView: View {
                             dismiss()
                         } label: {
                             Image(systemName: "chevron.left")
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.main)
                                 .font(.title3)
                         }
                         
@@ -70,7 +70,7 @@ struct AllFestivalsView: View {
                             showFilters = true
                         } label: {
                             Image(systemName: "line.3.horizontal.decrease.circle")
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.main)
                                 .font(.title3)
                         }
                     }
@@ -79,7 +79,7 @@ struct AllFestivalsView: View {
                     // Search field
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(AppColors.primary)
+                            .foregroundColor(AppColors.main)
                         TextField("Search festivals", text: $searchText)
                             .font(.body)
                         
@@ -88,7 +88,7 @@ struct AllFestivalsView: View {
                                 searchText = ""
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(AppColors.primary)
+                                    .foregroundColor(AppColors.main)
                             }
                         }
                     }
@@ -97,7 +97,7 @@ struct AllFestivalsView: View {
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(AppColors.primary.opacity(0.3), lineWidth: 1)
+                            .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
                     )
                     .padding(.horizontal)
                     
@@ -107,12 +107,12 @@ struct AllFestivalsView: View {
                             Text("Active Filters:")
                                 .foregroundColor(.secondary)
                             Text(selectedGenre ?? "")
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.main)
                             Button {
                                 selectedGenre = nil
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(AppColors.primary)
+                                    .foregroundColor(AppColors.main)
                             }
                         }
                         .padding(.horizontal)
@@ -125,10 +125,10 @@ struct AllFestivalsView: View {
                             Spacer()
                             Image(systemName: "film.stack")
                                 .font(.system(size: 60))
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.main)
                             Text("No festivals found")
                                 .font(.title2)
-                                .foregroundColor(AppColors.primary)
+                                .foregroundColor(AppColors.main)
                                 .padding(.top)
                             Spacer()
                         }
@@ -210,8 +210,8 @@ struct FestivalGridItem: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(AppColors.primary.opacity(0.1))
-                                .foregroundColor(AppColors.primary)
+                                .background(AppColors.main.opacity(0.1))
+                                .foregroundColor(AppColors.main)
                                 .cornerRadius(4)
                         }
                     }

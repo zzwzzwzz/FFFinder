@@ -51,7 +51,7 @@ struct HomeView: View {
 					// Search bar
 					HStack {
 						Image(systemName: "magnifyingglass")
-							.foregroundColor(AppColors.primary)
+							.foregroundColor(AppColors.main)
 						TextField("Search festivals", text: $searchText)
 							.font(.body)
 						
@@ -60,7 +60,7 @@ struct HomeView: View {
 								searchText = ""
 							} label: {
 								Image(systemName: "xmark.circle.fill")
-									.foregroundColor(AppColors.primary)
+									.foregroundColor(AppColors.main)
 							}
 						}
 					}
@@ -69,7 +69,7 @@ struct HomeView: View {
 					.cornerRadius(10)
 					.overlay(
 						RoundedRectangle(cornerRadius: 10)
-							.stroke(AppColors.primary.opacity(0.3), lineWidth: 1)
+							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
 					)
 					.padding(.horizontal)
 					
@@ -104,7 +104,7 @@ struct HomeView: View {
 							
 							NavigationLink(destination: AllFestivalsView(viewModel: viewModel)) {
 								Text("More")
-									.foregroundColor(AppColors.primary)
+									.foregroundColor(AppColors.main)
 									.font(.subheadline)
 							}
 						}

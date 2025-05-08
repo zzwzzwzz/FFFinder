@@ -20,7 +20,7 @@ struct FilterView: View {
                     isPresented = false
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(AppColors.primary)
+                        .foregroundColor(AppColors.main)
                         .font(.title2)
                 }
             }
@@ -41,7 +41,7 @@ struct FilterView: View {
                             Spacer()
                             if sortOption == option {
                                 Image(systemName: "checkmark")
-                                    .foregroundColor(AppColors.primary)
+                                    .foregroundColor(AppColors.main)
                             }
                         }
                         .padding(.vertical, 8)
@@ -67,7 +67,7 @@ struct FilterView: View {
                                 Spacer()
                                 if selectedGenre == nil {
                                     Image(systemName: "checkmark")
-                                        .foregroundColor(AppColors.primary)
+                                        .foregroundColor(AppColors.main)
                                 }
                             }
                             .padding(.vertical, 8)
@@ -83,7 +83,7 @@ struct FilterView: View {
                                     Spacer()
                                     if selectedGenre == genre {
                                         Image(systemName: "checkmark")
-                                            .foregroundColor(AppColors.primary)
+                                            .foregroundColor(AppColors.main)
                                     }
                                 }
                                 .padding(.vertical, 8)
@@ -105,7 +105,7 @@ struct FilterView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(AppColors.primary)
+                    .background(AppColors.main)
                     .cornerRadius(10)
             }
             .padding(.horizontal)

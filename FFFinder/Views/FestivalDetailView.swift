@@ -94,7 +94,7 @@ struct FestivalDetailView: View {
 								Text("Visit Official Website")
 								Image(systemName: "arrow.up.right.circle.fill")
 							}
-							.foregroundColor(AppColors.primary)
+							.foregroundColor(AppColors.main)
 							.font(.headline)
 						}
 						.padding(.top, 8)
@@ -135,7 +135,7 @@ struct FestivalDetailView: View {
 					dismiss()
 				} label: {
 					Image(systemName: "chevron.left")
-						.foregroundColor(AppColors.primary)
+						.foregroundColor(AppColors.main)
 						.padding(8)
 						.background(AppColors.background)
 						.clipShape(Circle())
@@ -147,7 +147,7 @@ struct FestivalDetailView: View {
 					// Share action
 				} label: {
 					Image(systemName: "square.and.arrow.up")
-						.foregroundColor(AppColors.primary)
+						.foregroundColor(AppColors.main)
 						.padding(8)
 						.background(AppColors.background)
 						.clipShape(Circle())
@@ -166,7 +166,7 @@ struct InfoItem: View {
 		VStack(spacing: 6) {
 			Image(systemName: icon)
 				.font(.system(size: 24))
-				.foregroundColor(AppColors.primary)
+				.foregroundColor(AppColors.main)
 			
 			VStack(spacing: 2) {
 				Text(label)
