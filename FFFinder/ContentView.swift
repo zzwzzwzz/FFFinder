@@ -19,9 +19,9 @@ struct ContentView: View {
                 }
                 .tag(0)
             
-            SearchView(viewModel: viewModel)
+            AllFestivalsView(viewModel: viewModel)
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label("All Festivals", systemImage: "film")
                 }
                 .tag(1)
             

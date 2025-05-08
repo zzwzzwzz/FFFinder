@@ -11,6 +11,14 @@ struct HomeView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
 	@State private var searchText = ""
 	
+	var featuredFestivals: [FilmFestival] {
+		// Sort by establishment year (oldest first) and take top 4
+		return viewModel.festivals
+			.sorted { $0.established < $1.established }
+			.prefix(4)
+			.map { $0 }
+	}
+	
 	var filteredFestivals: [FilmFestival] {
 		if searchText.isEmpty {
 			return viewModel.festivals
@@ -65,16 +73,16 @@ struct HomeView: View {
 					)
 					.padding(.horizontal)
 					
-					// Upcoming festivals section
+					// Featured festivals section
 					VStack(alignment: .leading) {
-						Text("Upcoming Festivals")
+						Text("Featured Festivals")
 							.font(.headline)
 							.padding(.horizontal)
 							.padding(.top)
 						
 						ScrollView(.horizontal, showsIndicators: false) {
 							HStack(spacing: 16) {
-								ForEach(filteredFestivals) { festival in
+								ForEach(featuredFestivals) { festival in
 									NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 										UpcomingFestivalCard(festival: festival)
 									}
@@ -86,14 +94,24 @@ struct HomeView: View {
 						}
 					}
 					
-					// All festivals section
+					// All festivals section with More button
 					VStack(alignment: .leading) {
-						Text("All Festivals")
-							.font(.headline)
-							.padding(.horizontal)
+						HStack {
+							Text("All Festivals")
+								.font(.headline)
+							
+							Spacer()
+							
+							NavigationLink(destination: AllFestivalsView(viewModel: viewModel)) {
+								Text("More")
+									.foregroundColor(AppColors.primary)
+									.font(.subheadline)
+							}
+						}
+						.padding(.horizontal)
 						
 						List {
-							ForEach(filteredFestivals) { festival in
+							ForEach(filteredFestivals.prefix(3)) { festival in
 								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 									FestivalListItem(festival: festival)
 								}
