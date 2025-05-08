@@ -12,9 +12,9 @@ struct HomeView: View {
 	@State private var searchText = ""
 	
 	var featuredFestivals: [FilmFestival] {
-		// Sort by establishment year (oldest first) and take top 4
+		// Sort by date and take top 4
 		return viewModel.festivals
-			.sorted { $0.established < $1.established }
+			.sorted { $0.dateRange < $1.dateRange }
 			.prefix(4)
 			.map { $0 }
 	}
