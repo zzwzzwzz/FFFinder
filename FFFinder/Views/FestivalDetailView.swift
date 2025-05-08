@@ -18,41 +18,46 @@ struct FestivalDetailView: View {
 			VStack(alignment: .leading, spacing: 0) {
 				// Header Image
 				ZStack(alignment: .bottom) {
-					// Placeholder festival image
-					Rectangle()
-						.fill(Color.gray.opacity(0.2))
-						.frame(height: 240)
-						.overlay(
-							Image(systemName: "film")
-								.resizable()
-								.scaledToFit()
-								.frame(width: 80)
-								.foregroundColor(.gray)
-						)
+					if let imageURL = festival.imageURL {
+						Image(imageURL)
+							.resizable()
+							.aspectRatio(contentMode: .fill)
+							.frame(height: 240)
+							.clipped()
+					} else {
+						Rectangle()
+							.fill(Color.gray.opacity(0.2))
+							.frame(height: 240)
+							.overlay(
+								Image(systemName: "film")
+									.resizable()
+									.scaledToFit()
+									.frame(width: 60)
+									.foregroundColor(.gray)
+							)
+					}
 					
 					// Festival name overlay
-					VStack(alignment: .leading) {
-						HStack {
-							VStack(alignment: .leading) {
-								Text(festival.name)
-									.font(.title)
-									.fontWeight(.bold)
-									.foregroundColor(.white)
-								
-								Text(festival.dateRange)
-									.font(.headline)
-									.foregroundColor(.white.opacity(0.9))
-							}
+					HStack {
+						VStack(alignment: .leading, spacing: 4) {
+							Text(festival.name)
+								.font(.title2)
+								.fontWeight(.bold)
+								.foregroundColor(.white)
 							
-							Spacer()
-							
-							Button {
-								viewModel.toggleFavorite(for: festival)
-							} label: {
-								Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
-									.font(.title2)
-									.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
-							}
+							Text(festival.dateRange)
+								.font(.subheadline)
+								.foregroundColor(.white.opacity(0.9))
+						}
+						
+						Spacer()
+						
+						Button {
+							viewModel.toggleFavorite(for: festival)
+						} label: {
+							Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
+								.font(.title3)
+								.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
 						}
 					}
 					.padding()
@@ -65,60 +70,56 @@ struct FestivalDetailView: View {
 					)
 				}
 				
-				// Festival Info Section
+				// Content
 				VStack(alignment: .leading, spacing: 24) {
 					// Quick Info
-					VStack(alignment: .leading, spacing: 16) {
-						HStack(spacing: 30) {
-							InfoItem(icon: "calendar", label: "Established", value: "\(festival.established)")
-							InfoItem(icon: "mappin.and.ellipse", label: "Location", value: festival.location)
-						}
+					HStack(spacing: 0) {
+						InfoItem(icon: "calendar", label: "Established", value: "\(festival.established)")
+						Divider()
+						InfoItem(icon: "mappin.and.ellipse", label: "Location", value: festival.location)
+						Divider()
+						InfoItem(icon: "link", label: "Website", value: "Visit")
+							.onTapGesture {
+								if let url = URL(string: festival.website) {
+									UIApplication.shared.open(url)
+								}
+							}
 					}
-					.padding()
+					.padding(.vertical, 12)
 					.background(AppColors.background)
-					.cornerRadius(12)
-					.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
 					
 					// About Section
 					VStack(alignment: .leading, spacing: 12) {
 						Text("About")
-							.font(.title2)
-							.fontWeight(.bold)
+							.font(.headline)
+							.foregroundColor(AppColors.main)
 						
 						Text(festival.description)
 							.font(.body)
-							.lineSpacing(6)
-						
-						Link(destination: URL(string: festival.website)!) {
-							HStack {
-								Text("Visit Official Website")
-								Image(systemName: "arrow.up.right.circle.fill")
-							}
-							.foregroundColor(AppColors.main)
-							.font(.headline)
-						}
-						.padding(.top, 8)
+							.foregroundColor(.secondary)
+							.lineSpacing(4)
 					}
 					
 					// Map Section
 					VStack(alignment: .leading, spacing: 12) {
 						Text("Location")
-							.font(.title2)
-							.fontWeight(.bold)
+							.font(.headline)
+							.foregroundColor(AppColors.main)
 						
 						// Placeholder map view
 						ZStack {
 							Rectangle()
-								.fill(Color.gray.opacity(0.2))
-								.frame(height: 200)
-								.cornerRadius(12)
+								.fill(Color.gray.opacity(0.1))
+								.frame(height: 160)
+								.cornerRadius(8)
 							
 							VStack {
 								Image(systemName: "map")
-									.font(.system(size: 40))
+									.font(.system(size: 30))
 									.foregroundColor(.gray)
 								
 								Text("Map View")
+									.font(.subheadline)
 									.foregroundColor(.gray)
 							}
 						}
@@ -135,21 +136,9 @@ struct FestivalDetailView: View {
 					dismiss()
 				} label: {
 					Image(systemName: "chevron.left")
-						.foregroundColor(AppColors.main)
+						.foregroundColor(.white)
 						.padding(8)
-						.background(AppColors.background)
-						.clipShape(Circle())
-				}
-			}
-			
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Button {
-					// Share action
-				} label: {
-					Image(systemName: "square.and.arrow.up")
-						.foregroundColor(AppColors.main)
-						.padding(8)
-						.background(AppColors.background)
+						.background(Color.black.opacity(0.3))
 						.clipShape(Circle())
 				}
 			}
@@ -163,21 +152,20 @@ struct InfoItem: View {
 	let value: String
 	
 	var body: some View {
-		VStack(spacing: 6) {
+		VStack(spacing: 4) {
 			Image(systemName: icon)
-				.font(.system(size: 24))
+				.font(.system(size: 20))
 				.foregroundColor(AppColors.main)
 			
-			VStack(spacing: 2) {
-				Text(label)
-					.font(.caption)
-					.foregroundColor(.secondary)
-				
-				Text(value)
-					.font(.subheadline)
-					.fontWeight(.medium)
-			}
+			Text(label)
+				.font(.caption)
+				.foregroundColor(.secondary)
+			
+			Text(value)
+				.font(.subheadline)
+				.fontWeight(.medium)
 		}
+		.frame(maxWidth: .infinity)
 	}
 }
 
