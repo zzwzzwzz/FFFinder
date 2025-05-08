@@ -47,7 +47,7 @@ struct SearchView: View {
 					// Search field
 					HStack {
 						Image(systemName: "magnifyingglass")
-							.foregroundColor(.gray)
+							.foregroundColor(AppColors.primary)
 						TextField("Search festivals", text: $searchText)
 							.font(.body)
 						
@@ -56,13 +56,17 @@ struct SearchView: View {
 								searchText = ""
 							} label: {
 								Image(systemName: "xmark.circle.fill")
-									.foregroundColor(.gray)
+									.foregroundColor(AppColors.primary)
 							}
 						}
 					}
 					.padding(10)
-					.background(Color(.systemGray6))
+					.background(AppColors.background)
 					.cornerRadius(10)
+					.overlay(
+						RoundedRectangle(cornerRadius: 10)
+							.stroke(AppColors.primary.opacity(0.3), lineWidth: 1)
+					)
 					.padding(.horizontal)
 					
 					// Genre filters
@@ -76,10 +80,10 @@ struct SearchView: View {
 									.padding(.vertical, 8)
 									.background(
 										selectedGenre == nil ?
-										Color.blue : Color(.systemGray5)
+										AppColors.primary : AppColors.background
 									)
 									.foregroundColor(
-										selectedGenre == nil ? .white : .primary
+										selectedGenre == nil ? .white : AppColors.primary
 									)
 									.cornerRadius(20)
 							}
@@ -97,10 +101,10 @@ struct SearchView: View {
 										.padding(.vertical, 8)
 										.background(
 											selectedGenre == genre ?
-											Color.blue : Color(.systemGray5)
+											AppColors.primary : AppColors.background
 										)
 										.foregroundColor(
-											selectedGenre == genre ? .white : .primary
+											selectedGenre == genre ? .white : AppColors.primary
 										)
 										.cornerRadius(20)
 								}
@@ -126,7 +130,7 @@ struct SearchView: View {
 					} else {
 						List {
 							ForEach(filteredFestivals) { festival in
-								NavigationLink(destination: FestivalDetailView(festival: festival)) {
+								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 									FestivalListItem(festival: festival)
 								}
 								.listRowBackground(Color("CardBackground"))

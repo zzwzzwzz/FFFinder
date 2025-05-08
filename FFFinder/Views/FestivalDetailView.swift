@@ -10,8 +10,8 @@ import MapKit
 
 struct FestivalDetailView: View {
 	let festival: FilmFestival
+	@ObservedObject var viewModel: FestivalsViewModel
 	@Environment(\.dismiss) private var dismiss
-	@State private var isFavorite = false
 	
 	var body: some View {
 		ScrollView {
@@ -47,11 +47,11 @@ struct FestivalDetailView: View {
 							Spacer()
 							
 							Button {
-								isFavorite.toggle()
+								viewModel.toggleFavorite(for: festival)
 							} label: {
-								Image(systemName: isFavorite ? "heart.fill" : "heart")
+								Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
 									.font(.title2)
-									.foregroundColor(isFavorite ? .red : .white)
+									.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
 							}
 						}
 					}
@@ -75,7 +75,7 @@ struct FestivalDetailView: View {
 						}
 					}
 					.padding()
-					.background(Color("CardBackground"))
+					.background(AppColors.background)
 					.cornerRadius(12)
 					.shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
 					
@@ -94,7 +94,7 @@ struct FestivalDetailView: View {
 								Text("Visit Official Website")
 								Image(systemName: "arrow.up.right.circle.fill")
 							}
-							.foregroundColor(.blue)
+							.foregroundColor(AppColors.primary)
 							.font(.headline)
 						}
 						.padding(.top, 8)
@@ -135,9 +135,9 @@ struct FestivalDetailView: View {
 					dismiss()
 				} label: {
 					Image(systemName: "chevron.left")
-						.foregroundColor(.primary)
+						.foregroundColor(AppColors.primary)
 						.padding(8)
-						.background(Color.white.opacity(0.8))
+						.background(AppColors.background)
 						.clipShape(Circle())
 				}
 			}
@@ -147,9 +147,9 @@ struct FestivalDetailView: View {
 					// Share action
 				} label: {
 					Image(systemName: "square.and.arrow.up")
-						.foregroundColor(.primary)
+						.foregroundColor(AppColors.primary)
 						.padding(8)
-						.background(Color.white.opacity(0.8))
+						.background(AppColors.background)
 						.clipShape(Circle())
 				}
 			}
@@ -166,7 +166,7 @@ struct InfoItem: View {
 		VStack(spacing: 6) {
 			Image(systemName: icon)
 				.font(.system(size: 24))
-				.foregroundColor(.blue)
+				.foregroundColor(AppColors.primary)
 			
 			VStack(spacing: 2) {
 				Text(label)
@@ -183,6 +183,6 @@ struct InfoItem: View {
 
 #Preview {
 	NavigationStack {
-		FestivalDetailView(festival: FilmFestival.samples[0])
+		FestivalDetailView(festival: FilmFestival.samples[0], viewModel: FestivalsViewModel())
 	}
 }

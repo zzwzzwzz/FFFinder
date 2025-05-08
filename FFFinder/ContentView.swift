@@ -37,7 +37,8 @@ struct ContentView: View {
                 }
                 .tag(3)
         }
-        .accentColor(Color("AccentColor"))
+        .accentColor(AppColors.accent)
+        .background(AppColors.background)
     }
 }
 

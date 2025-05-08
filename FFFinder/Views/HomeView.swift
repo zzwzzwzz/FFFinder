@@ -43,7 +43,7 @@ struct HomeView: View {
 					// Search bar
 					HStack {
 						Image(systemName: "magnifyingglass")
-							.foregroundColor(.gray)
+							.foregroundColor(AppColors.primary)
 						TextField("Search festivals", text: $searchText)
 							.font(.body)
 						
@@ -52,13 +52,17 @@ struct HomeView: View {
 								searchText = ""
 							} label: {
 								Image(systemName: "xmark.circle.fill")
-									.foregroundColor(.gray)
+									.foregroundColor(AppColors.primary)
 							}
 						}
 					}
 					.padding(10)
-					.background(Color(.systemGray6))
+					.background(AppColors.background)
 					.cornerRadius(10)
+					.overlay(
+						RoundedRectangle(cornerRadius: 10)
+							.stroke(AppColors.primary.opacity(0.3), lineWidth: 1)
+					)
 					.padding(.horizontal)
 					
 					// Upcoming festivals section
@@ -71,7 +75,7 @@ struct HomeView: View {
 						ScrollView(.horizontal, showsIndicators: false) {
 							HStack(spacing: 16) {
 								ForEach(filteredFestivals) { festival in
-									NavigationLink(destination: FestivalDetailView(festival: festival)) {
+									NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 										UpcomingFestivalCard(festival: festival)
 									}
 									.buttonStyle(PlainButtonStyle())
@@ -90,7 +94,7 @@ struct HomeView: View {
 						
 						List {
 							ForEach(filteredFestivals) { festival in
-								NavigationLink(destination: FestivalDetailView(festival: festival)) {
+								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 									FestivalListItem(festival: festival)
 								}
 								.listRowBackground(Color("CardBackground"))

@@ -28,13 +28,13 @@ struct FavoritesView: View {
 							Spacer()
 							Image(systemName: "heart.fill")
 								.font(.system(size: 60))
-								.foregroundColor(.gray)
+								.foregroundColor(AppColors.primary)
 							Text("No favorites yet")
 								.font(.title2)
-								.foregroundColor(.gray)
+								.foregroundColor(AppColors.primary)
 							Text("Tap the heart icon on a festival to add it to your favorites")
 								.font(.body)
-								.foregroundColor(.gray)
+								.foregroundColor(AppColors.primary)
 								.multilineTextAlignment(.center)
 								.padding(.horizontal, 40)
 							Spacer()
@@ -42,7 +42,7 @@ struct FavoritesView: View {
 					} else {
 						List {
 							ForEach(viewModel.getFavoriteFestivals()) { festival in
-								NavigationLink(destination: FestivalDetailView(festival: festival)) {
+								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 									FestivalListItem(festival: festival)
 								}
 								.listRowBackground(Color("CardBackground"))
