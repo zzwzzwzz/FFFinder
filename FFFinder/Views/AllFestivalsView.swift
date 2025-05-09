@@ -17,7 +17,8 @@ struct AllFestivalsView: View {
     
     enum SortOption: String, CaseIterable {
         case name = "Name"
-        case date = "Date"
+        case dateAscending = "Date (Soonest First)" 
+        case dateDescending = "Date (Latest First)"
         case popularity = "Popularity"
     }
     
