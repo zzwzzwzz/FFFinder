@@ -13,7 +13,6 @@ struct AllFestivalsView: View {
     @State private var selectedGenre: String?
     @State private var sortOption: SortOption = .name
     @State private var showFilter = false
-    @Environment(\.dismiss) private var dismiss
     
     enum SortOption: String, CaseIterable {
         case name = "Name"
@@ -57,32 +56,31 @@ struct AllFestivalsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Search Header
-                VStack(spacing: 12) {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                        
-                        TextField("Search festivals...", text: $searchText)
-                            .textFieldStyle(PlainTextFieldStyle())
-                    }
-                    .padding(10)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    
-                    // Filter Button
-                    Button {
-                        showFilter = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
-                            Text("Filter")
-                        }
+                // Search Bar
+                HStack {
+                    Image(systemName: "magnifyingglass")
                         .foregroundColor(AppColors.main)
+                    TextField("Search festivals", text: $searchText)
+                        .font(.body)
+                    
+                    if !searchText.isEmpty {
+                        Button {
+                            searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(AppColors.main)
+                        }
                     }
                 }
-                .padding()
+                .padding(10)
                 .background(AppColors.background)
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
+                )
+                .padding(.horizontal)
+                .padding(.top, 8)
                 
                 // Festival Grid
                 ScrollView {
@@ -100,6 +98,17 @@ struct AllFestivalsView: View {
                 }
             }
             .navigationTitle("All Festivals")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showFilter = true
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
+                            .foregroundColor(AppColors.main)
+                    }
+                }
+            }
             .sheet(isPresented: $showFilter) {
                 FilterView(
                     isPresented: $showFilter,
