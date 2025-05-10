@@ -12,156 +12,97 @@ struct AllFestivalsView: View {
     @State private var searchText = ""
     @State private var selectedGenre: String?
     @State private var sortOption: SortOption = .name
-    @State private var showFilters = false
+    @State private var showFilter = false
     @Environment(\.dismiss) private var dismiss
     
     enum SortOption: String, CaseIterable {
         case name = "Name"
-        case dateAscending = "Date (Soonest First)" 
-        case dateDescending = "Date (Latest First)"
+        case date = "Date"
         case popularity = "Popularity"
     }
     
     var genres: [String] {
-        viewModel.getAvailableGenres()
+        Array(Set(viewModel.festivals.flatMap { $0.genres })).sorted()
     }
     
     var filteredFestivals: [FilmFestival] {
-        var festivals = viewModel.festivals
+        var result = viewModel.festivals
         
+        // Apply search filter
         if !searchText.isEmpty {
-            festivals = festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            result = result.filter { festival in
+                festival.name.localizedCaseInsensitiveContains(searchText) ||
+                festival.description.localizedCaseInsensitiveContains(searchText)
+            }
         }
         
-        if let genre = selectedGenre {
-            festivals = festivals.filter { $0.genres.contains(genre) }
+        // Apply genre filter
+        if let selectedGenre = selectedGenre {
+            result = result.filter { $0.genres.contains(selectedGenre) }
         }
         
-        // Sort festivals
+        // Apply sorting
         switch sortOption {
         case .name:
-            festivals.sort { $0.name < $1.name }
+            result.sort { $0.name < $1.name }
         case .date:
-            festivals.sort { $0.dateRange < $1.dateRange }
+            result.sort { $0.dateRange < $1.dateRange }
         case .popularity:
-            // For now, we'll use establishment year as a proxy for popularity
-            festivals.sort { $0.established > $1.established }
+            result.sort { $0.established < $1.established }
         }
         
-        return festivals
+        return result
     }
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color("BackgroundColor")
-                    .edgesIgnoringSafeArea(.all)
-                
-                VStack(spacing: 0) {
-                    // Header with back button and filter
+            VStack(spacing: 0) {
+                // Search Header
+                VStack(spacing: 12) {
                     HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(AppColors.main)
-                                .font(.title3)
-                        }
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
                         
-                        Text("All Film Festivals")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        
-                        Spacer()
-                        
-                        Button {
-                            showFilters = true
-                        } label: {
+                        TextField("Search festivals...", text: $searchText)
+                            .textFieldStyle(PlainTextFieldStyle())
+                    }
+                    .padding(10)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                    
+                    // Filter Button
+                    Button {
+                        showFilter = true
+                    } label: {
+                        HStack {
                             Image(systemName: "line.3.horizontal.decrease.circle")
-                                .foregroundColor(AppColors.main)
-                                .font(.title3)
+                            Text("Filter")
+                        }
+                        .foregroundColor(AppColors.main)
+                    }
+                }
+                .padding()
+                .background(AppColors.background)
+                
+                // Festival Grid
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible(), spacing: 16),
+                        GridItem(.flexible(), spacing: 16)
+                    ], spacing: 16) {
+                        ForEach(filteredFestivals) { festival in
+                            NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                FestivalGridItem(festival: festival)
+                            }
                         }
                     }
                     .padding()
-                    
-                    // Search field
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(AppColors.main)
-                        TextField("Search festivals", text: $searchText)
-                            .font(.body)
-                        
-                        if !searchText.isEmpty {
-                            Button {
-                                searchText = ""
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(AppColors.main)
-                            }
-                        }
-                    }
-                    .padding(10)
-                    .background(AppColors.background)
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
-                    )
-                    .padding(.horizontal)
-                    
-                    // Active filters
-                    if selectedGenre != nil {
-                        HStack {
-                            Text("Active Filters:")
-                                .foregroundColor(.secondary)
-                            Text(selectedGenre ?? "")
-                                .foregroundColor(AppColors.main)
-                            Button {
-                                selectedGenre = nil
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(AppColors.main)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.top, 8)
-                    }
-                    
-                    // Results
-                    if filteredFestivals.isEmpty {
-                        VStack {
-                            Spacer()
-                            Image(systemName: "film.stack")
-                                .font(.system(size: 60))
-                                .foregroundColor(AppColors.main)
-                            Text("No festivals found")
-                                .font(.title2)
-                                .foregroundColor(AppColors.main)
-                                .padding(.top)
-                            Spacer()
-                        }
-                    } else {
-                        ScrollView {
-                            LazyVGrid(columns: [
-                                GridItem(.flexible(), spacing: 16),
-                                GridItem(.flexible(), spacing: 16)
-                            ], spacing: 16) {
-                                ForEach(filteredFestivals) { festival in
-                                    NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-                                        FestivalGridItem(festival: festival)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding()
-                        }
-                    }
                 }
             }
-            .navigationBarHidden(true)
-            .sheet(isPresented: $showFilters) {
+            .navigationTitle("All Festivals")
+            .sheet(isPresented: $showFilter) {
                 FilterView(
-                    isPresented: $showFilters,
+                    isPresented: $showFilter,
                     selectedGenre: $selectedGenre,
                     sortOption: $sortOption,
                     genres: genres
