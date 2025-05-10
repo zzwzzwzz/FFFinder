@@ -21,17 +21,23 @@ struct FilmFestival: Identifiable {
 	let imageURL: String?
 	let genres: [String]
 	let ticketPrice: String?
+	let history: String
+	let featuredFilms: [Film]
 	
 	static let samples = [
-		FilmFestival(name: "Sydney Film Festival",
-					 dateRange: "June 5-16, 2025",
-					 description: "Sydney's premier film event showcasing the best in world cinema. Founded in 1954, Sydney Film Festival is one of the world's longest-running film festivals. The festival screens feature films, documentaries, short films and animations across Sydney.",
-					 website: "https://www.sff.org.au",
-					 location: "Various locations across Sydney",
-					 established: 1954,
-					 imageURL: "sff_logo",
-					 genres: ["International", "Features", "Documentary", "Short Films"],
-					 ticketPrice: "$20-25"),
+		FilmFestival(
+			name: "Sydney Film Festival",
+			dateRange: "June 5-16, 2025",
+			description: "The Sydney Film Festival is one of the longest running film festivals in the world, showcasing the best in international and Australian cinema.",
+			website: "https://www.sff.org.au",
+			location: "Sydney",
+			established: 1954,
+			imageURL: "SydneyFilmFestival",
+			genres: ["International", "Australian", "Documentary", "Short Films"],
+			ticketPrice: "$20-25",
+			history: "Founded in 1954, the Sydney Film Festival has grown to become one of Australia's most prestigious film events, attracting filmmakers and audiences from around the world.",
+			featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Film Festival" } }
+		),
 		
 		FilmFestival(name: "Flickerfest",
 					 dateRange: "January 21-30, 2025",
@@ -41,7 +47,9 @@ struct FilmFestival: Identifiable {
 					 established: 1991,
 					 imageURL: "flickerfest_logo",
 					 genres: ["Short Films", "Animation", "Documentary"],
-					 ticketPrice: "$15-22"),
+					 ticketPrice: "$15-22",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Flickerfest" } }),
 		
 		FilmFestival(name: "Japanese Film Festival",
 					 dateRange: "November 10-20, 2025",
@@ -51,7 +59,9 @@ struct FilmFestival: Identifiable {
 					 established: 1997,
 					 imageURL: "jff_logo",
 					 genres: ["Japanese", "International", "Animation"],
-					 ticketPrice: "$18-22"),
+					 ticketPrice: "$18-22",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Japanese Film Festival" } }),
 		
 		FilmFestival(name: "Queer Screen Film Fest",
 					 dateRange: "September 15-25, 2025",
@@ -61,7 +71,9 @@ struct FilmFestival: Identifiable {
 					 established: 1993,
 					 imageURL: "queerscreen_logo",
 					 genres: ["LGBTQ+", "Drama", "Documentary"],
-					 ticketPrice: "$15-20"),
+					 ticketPrice: "$15-20",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Film Fest" } }),
 		
 		FilmFestival(name: "Sydney Underground Film Festival",
 					 dateRange: "September 12-15, 2025",
@@ -71,7 +83,9 @@ struct FilmFestival: Identifiable {
 					 established: 2007,
 					 imageURL: "suff_logo",
 					 genres: ["Independent", "Experimental", "Underground"],
-					 ticketPrice: "$15-25"),
+					 ticketPrice: "$15-25",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Underground Film Festival" } }),
 		
 		FilmFestival(name: "Sydney Science Fiction Film Festival",
 					 dateRange: "October 5-8, 2025",
@@ -81,7 +95,9 @@ struct FilmFestival: Identifiable {
 					 established: 2015,
 					 imageURL: "scifi_logo",
 					 genres: ["Science Fiction", "Fantasy", "Horror"],
-					 ticketPrice: "$18-25"),
+					 ticketPrice: "$18-25",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Science Fiction Film Festival" } }),
 		
 		FilmFestival(name: "Sydney Women's International Film Festival",
 					 dateRange: "March 8-15, 2025",
@@ -91,7 +107,9 @@ struct FilmFestival: Identifiable {
 					 established: 2010,
 					 imageURL: "swiff_logo",
 					 genres: ["Women Directors", "International", "Documentary"],
-					 ticketPrice: "$15-20"),
+					 ticketPrice: "$15-20",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Women's International Film Festival" } }),
 		
 		FilmFestival(name: "Sydney Latin American Film Festival",
 					 dateRange: "August 15-25, 2025",
@@ -101,17 +119,21 @@ struct FilmFestival: Identifiable {
 					 established: 2008,
 					 imageURL: "slaff_logo",
 					 genres: ["Latin American", "International", "Documentary"],
-					 ticketPrice: "$15-20"),
+					 ticketPrice: "$15-20",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Latin American Film Festival" } }),
 		
 		FilmFestival(name: "Antenna Documentary Film Festival",
 					 dateRange: "February 6–16, 2025",
-					 description: "Australia’s leading international non-fiction film festival, showcasing 50 of the most creative, thought-provoking documentaries from around the globe over 11 days.",
+					 description: "Australia's leading international non-fiction film festival, showcasing 50 of the most creative, thought-provoking documentaries from around the globe over 11 days.",
 					 website: "https://antennafestival.org",
 					 location: "Various venues across Sydney",
 					 established: 2011,
 					 imageURL: "antenna_logo",
 					 genres: ["Documentary", "International", "Non-Fiction"],
-					 ticketPrice: "$15–25"),
+					 ticketPrice: "$15–25",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Antenna Documentary Film Festival" } }),
 
 		FilmFestival(name: "Queer Screen Mardi Gras Film Festival",
 					 dateRange: "February 13–27, 2025",
@@ -121,7 +143,9 @@ struct FilmFestival: Identifiable {
 					 established: 1993,
 					 imageURL: "mardi_gras_logo",
 					 genres: ["LGBTQ+", "Drama", "Documentary", "International"],
-					 ticketPrice: "$15–22"),
+					 ticketPrice: "$15–22",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Mardi Gras Film Festival" } }),
 
 		FilmFestival(name: "Europa! Europa Film Festival",
 					 dateRange: "February 13–March 12, 2025",
@@ -131,7 +155,9 @@ struct FilmFestival: Identifiable {
 					 established: 2022,
 					 imageURL: "europa_europa_logo",
 					 genres: ["European", "International", "Drama", "Comedy"],
-					 ticketPrice: "$21–26")
+					 ticketPrice: "$21–26",
+					 history: "",
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Europa! Europa Film Festival" } })
 
 	]
 }

@@ -124,6 +124,56 @@ struct FestivalDetailView: View {
 							}
 						}
 					}
+					
+					// Featured Films Section
+					VStack(alignment: .leading, spacing: 12) {
+						Text("Recent Winners")
+							.font(.headline)
+							.foregroundColor(AppColors.main)
+						
+						ScrollView(.horizontal, showsIndicators: false) {
+							HStack(spacing: 16) {
+								ForEach(festival.featuredFilms) { film in
+									NavigationLink(destination: FilmDetailView(film: film)) {
+										VStack(alignment: .leading) {
+											// Film poster
+											if let posterURL = film.posterURL {
+												Image(posterURL)
+													.resizable()
+													.aspectRatio(contentMode: .fill)
+													.frame(width: 120, height: 180)
+													.clipped()
+													.cornerRadius(8)
+											} else {
+												Rectangle()
+													.fill(Color.gray.opacity(0.2))
+													.frame(width: 120, height: 180)
+													.cornerRadius(8)
+													.overlay(
+														Image(systemName: "film")
+															.foregroundColor(.gray)
+													)
+											}
+											
+											// Film info
+											VStack(alignment: .leading, spacing: 4) {
+												Text(film.title)
+													.font(.subheadline)
+													.fontWeight(.medium)
+													.lineLimit(1)
+												
+												Text("\(film.year)")
+													.font(.caption)
+													.foregroundColor(.secondary)
+											}
+											.frame(width: 120)
+										}
+									}
+								}
+							}
+							.padding(.horizontal, 4)
+						}
+					}
 				}
 				.padding()
 			}
