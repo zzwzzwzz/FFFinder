@@ -35,7 +35,7 @@ struct Film: Identifiable {
             director: "Warwick Thornton",
             description: "In 1940s Australia, a 9-year-old Aboriginal orphan boy arrives at a remote monastery run by a renegade nun. The new boy's presence disturbs the delicately balanced world in this story of spiritual struggle and the cost of survival.",
             posterURL: "new_boy_poster",
-            imdbURL: "https://www.imdb.com/title/tt21979336/",
+            imdbURL: "https://www.imdb.com/title/tt18180926/",
             letterboxdURL: "https://letterboxd.com/film/the-new-boy-2023/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_new_boy_2023",
             awards: [
@@ -53,7 +53,7 @@ struct Film: Identifiable {
             director: "Goran Stolevski",
             description: "In an isolated mountain village in 19th century Macedonia, a young girl is taken from her mother and transformed into a witch by an ancient spirit. Curious about life as a human, the witch accidentally kills a villager and uses her body to live among humans.",
             posterURL: "you_wont_be_alone_poster",
-            imdbURL: "https://www.imdb.com/title/tt11851548/",
+            imdbURL: "https://www.imdb.com/title/tt8296030/",
             letterboxdURL: "https://letterboxd.com/film/you-wont-be-alone/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/you_wont_be_alone",
             awards: [
@@ -71,7 +71,7 @@ struct Film: Identifiable {
             director: "Leah Purcell",
             description: "A searing Australian western thriller that follows Molly Johnson and her children in the harsh Australian alpine country in 1893. Molly is preparing her four children for the absence of their drover husband, when a shackled Aboriginal man breaks his bindings and interrupts her dinner.",
             posterURL: "drovers_wife_poster",
-            imdbURL: "https://www.imdb.com/title/tt10199586/",
+            imdbURL: "https://www.imdb.com/title/tt11162490/",
             letterboxdURL: "https://letterboxd.com/film/the-drovers-wife-the-legend-of-molly-johnson/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_drovers_wife_the_legend_of_molly_johnson",
             awards: [
@@ -89,7 +89,7 @@ struct Film: Identifiable {
             director: "Emma Seligman",
             description: "A college student runs into her sugar daddy and his wife at a Jewish funeral service with her parents.",
             posterURL: "shiva_baby_poster",
-            imdbURL: "https://www.imdb.com/title/tt11447806/",
+            imdbURL: "https://www.imdb.com/title/tt11317142/",
             letterboxdURL: "https://letterboxd.com/film/shiva-baby/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/shiva_baby",
             awards: [
@@ -109,7 +109,7 @@ struct Film: Identifiable {
             director: "Sarah Smith",
             description: "A poignant short film about a lighthouse keeper's final night on duty, exploring themes of isolation and legacy.",
             posterURL: "last_light_poster",
-            imdbURL: "https://www.imdb.com/title/tt12345678/",
+            imdbURL: "https://www.imdb.com/title/tt20199286/",
             letterboxdURL: "https://letterboxd.com/film/the-last-light/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_last_light",
             awards: [

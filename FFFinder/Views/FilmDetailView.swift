@@ -90,28 +90,78 @@ struct FilmDetailView: View {
                             .foregroundColor(AppColors.main)
                         
                         ForEach(film.awards, id: \.festival) { award in
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(award.award)
-                                        .font(.subheadline)
-                                        .fontWeight(.medium)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(award.year)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                            // Find the festival by name for navigation
+                            if let festival = viewModel.findFestivalByName(award.festival) {
+                                // Wrap the entire award box in NavigationLink
+                                NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Text(award.award)
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.primary) // Ensure proper color in NavigationLink
+                                            
+                                            Spacer()
+                                            
+                                            Text("\(award.year)")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        
+                                        HStack {
+                                            Text(award.festival)
+                                                .font(.caption)
+                                                .foregroundColor(AppColors.main)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "chevron.right")
+                                                .font(.caption)
+                                                .foregroundColor(AppColors.main)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                                    // Add animation effect on press
+                                    .scaleEffect(1.0)
+                                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: UUID()) // Using UUID() as a workaround
                                 }
-                                
+                                .buttonStyle(AwardButtonStyle())
+                            } else {
+                                // Fallback to external link if festival not found
                                 Link(destination: URL(string: award.festivalURL)!) {
-                                    Text(award.festival)
-                                        .font(.caption)
-                                        .foregroundColor(AppColors.main)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Text(award.award)
+                                                .font(.subheadline)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.primary)
+                                            
+                                            Spacer()
+                                            
+                                            Text("\(award.year)")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        
+                                        HStack {
+                                            Text(award.festival)
+                                                .font(.caption)
+                                                .foregroundColor(AppColors.main)
+                                            
+                                            Spacer()
+                                            
+                                            Image(systemName: "arrow.up.right")
+                                                .font(.caption)
+                                                .foregroundColor(AppColors.main)
+                                        }
+                                    }
+                                    .padding()
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
                                 }
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
                         }
                     }
                     
@@ -187,6 +237,16 @@ struct FilmDetailView: View {
                 }
             }
         }
+    }
+}
+
+// Custom button style to handle press animation
+struct AwardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }
 
