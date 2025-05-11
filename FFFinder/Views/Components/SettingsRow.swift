@@ -12,13 +12,10 @@ struct SettingsRow: View {
 	let title: String
 	
 	var body: some View {
-		Button(action: {
-			// Action would go here
-		}) {
 			HStack {
 				Image(systemName: icon)
 					.frame(width: 24, height: 24)
-					.foregroundColor(.blue)
+					.foregroundColor(AppColors.main)
 				
 				Text(title)
 					.foregroundColor(.primary)
@@ -31,9 +28,6 @@ struct SettingsRow: View {
 			}
 			.padding(.vertical, 14)
 			.padding(.horizontal)
-		}
-		Divider()
-			.padding(.leading, 56)
 	}
 }
 

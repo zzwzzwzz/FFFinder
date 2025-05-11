@@ -43,8 +43,12 @@ struct ProfileView: View {
 					VStack(spacing: 0) {
 						SettingsRow(icon: "gear", title: "Settings")
 						SettingsRow(icon: "bell", title: "Notifications")
-						SettingsRow(icon: "questionmark.circle", title: "Help & Support")
-						SettingsRow(icon: "info.circle", title: "About App")
+                        NavigationLink(destination: HelpSupportView()) {
+                               SettingsRow(icon: "questionmark.circle", title: "Help & Support")
+                           }
+                        NavigationLink(destination: AboutView()) {
+                            SettingsRow(icon: "info.circle", title: "About App")
+                        }
 					}
 					.background(Color("CardBackground"))
 					.cornerRadius(12)
