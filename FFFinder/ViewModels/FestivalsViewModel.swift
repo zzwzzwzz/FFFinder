@@ -92,4 +92,9 @@ class FestivalsViewModel: ObservableObject {
 		}
 		return Array(genres).sorted()
 	}
+	
+	// New method to find a festival by name
+	func findFestivalByName(_ name: String) -> FilmFestival? {
+		return festivals.first(where: { $0.name == name })
+	}
 }
