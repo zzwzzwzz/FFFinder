@@ -85,19 +85,27 @@ struct FestivalDetailView: View {
 					)
 					.frame(height: 300)
 					
-					// Festival name and date
-					VStack(alignment: .leading, spacing: 8) {
+					// Festival name and favorite icon
+					HStack(alignment: .center, spacing: 0) {
 						Text(festival.name)
-							.font(.title)
-							.fontWeight(.bold)
+							.font(.title2)
+							.fontWeight(.semibold)
 							.foregroundColor(.white)
-						
-						Text(festival.dateRange)
-							.font(.subheadline)
-							.foregroundColor(.white.opacity(0.9))
+							.lineLimit(2)
+							.multilineTextAlignment(.leading)
+						Spacer()
+						Button(action: {
+							viewModel.toggleFavorite(for: festival)
+						}) {
+							Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
+								.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
+								.font(.title2)
+						}
+						.buttonStyle(PlainButtonStyle())
 					}
-					.frame(maxWidth: .infinity, alignment: .leading)
-					.padding()
+					.frame(maxWidth: .infinity)
+					.padding(.horizontal)
+					.padding(.bottom, 12)
 				}
 				.frame(height: 300)
 				

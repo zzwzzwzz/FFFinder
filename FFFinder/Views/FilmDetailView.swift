@@ -23,17 +23,17 @@ struct FilmDetailView: View {
                             case .empty:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.2))
-                                    .frame(height: 400)
+                                    .frame(height: 600)
                             case .success(let image):
                                 image
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
-                                    .frame(height: 400)
+                                    .frame(height: 600)
                                     .clipped()
                             case .failure:
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.2))
-                                    .frame(height: 400)
+                                    .frame(height: 600)
                                     .overlay(
                                         Image(systemName: "film")
                                             .resizable()
@@ -48,7 +48,7 @@ struct FilmDetailView: View {
                     } else {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
-                            .frame(height: 400)
+                            .frame(height: 600)
                             .overlay(
                                 Image(systemName: "film")
                                     .resizable()
@@ -61,25 +61,31 @@ struct FilmDetailView: View {
                     // Film title overlay
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(film.title)
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
+							HStack {
+								Text(film.title)
+									.font(.title)
+									.fontWeight(.bold)
+									.foregroundColor(.white)
+								
+								Button {
+									viewModel.toggleFavoriteFilm(for: film)
+								} label: {
+									Image(systemName: viewModel.isFavoriteFilm(film: film) ? "heart.fill" : "heart")
+										.font(.title3)
+										.foregroundColor(viewModel.isFavoriteFilm(film: film) ? .red : .white)
+								}
+							}
                             
                             Text("\(film.year) • Directed by \(film.director)")
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.9))
-                        }
-                        
-                        Spacer()
-                        
-                        Button {
-                            viewModel.toggleFavoriteFilm(for: film)
-                        } label: {
-                            Image(systemName: viewModel.isFavoriteFilm(film: film) ? "heart.fill" : "heart")
-                                .font(.title3)
-                                .foregroundColor(viewModel.isFavoriteFilm(film: film) ? .red : .white)
-                        }
+								.padding(.bottom, 10)
+													
+							Text(film.description)
+								.font(.body)
+								.foregroundColor(.white)
+								.lineSpacing(4)
+						}
                     }
                     .padding()
                     .background(
@@ -93,17 +99,6 @@ struct FilmDetailView: View {
                 
                 // Content
                 VStack(alignment: .leading, spacing: 24) {
-                    // Description
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("About")
-                            .font(.headline)
-                            .foregroundColor(AppColors.main)
-                        
-                        Text(film.description)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .lineSpacing(4)
-                    }
                     
                     // Awards Section
                     VStack(alignment: .leading, spacing: 12) {
@@ -189,7 +184,7 @@ struct FilmDetailView: View {
                     
                     // External Links
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("More Information")
+                        Text("More")
                             .font(.headline)
                             .foregroundColor(AppColors.main)
                         
