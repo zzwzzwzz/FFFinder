@@ -36,7 +36,6 @@ struct SettingsView: View {
                 .cornerRadius(12)
                 .padding(.horizontal)
                 
-                // 登出按钮
                 Section {
                     Button(role: .destructive) {
                         isLoggedIn = false
