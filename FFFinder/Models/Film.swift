@@ -34,7 +34,7 @@ struct Film: Identifiable {
             year: 2023,
             director: "Warwick Thornton",
             description: "In 1940s Australia, a 9-year-old Aboriginal orphan boy arrives at a remote monastery run by a renegade nun. The new boy's presence disturbs the delicately balanced world in this story of spiritual struggle and the cost of survival.",
-            posterURL: "new_boy_poster",
+            posterURL: "new_boy_poster.png",
             imdbURL: "https://www.imdb.com/title/tt18180926/",
             letterboxdURL: "https://letterboxd.com/film/the-new-boy-2023/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_new_boy_2023",
