@@ -7,11 +7,29 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
+
+class FestivalLocationManager: ObservableObject {
+	@Published var coordinate: CLLocationCoordinate2D?
+	private let geocoder = CLGeocoder()
+	
+	func geocode(address: String) {
+		geocoder.geocodeAddressString(address) { placemarks, error in
+			if let location = placemarks?.first?.location {
+				DispatchQueue.main.async {
+					self.coordinate = location.coordinate
+				}
+			}
+		}
+	}
+}
 
 struct FestivalDetailView: View {
 	let festival: FilmFestival
 	@ObservedObject var viewModel: FestivalsViewModel
 	@Environment(\.dismiss) private var dismiss
+	@StateObject private var locationManager = FestivalLocationManager()
+	@State private var showFullScreenMap = false
 	
 	var body: some View {
 		ScrollView {
@@ -105,23 +123,19 @@ struct FestivalDetailView: View {
 						Text("Location")
 							.font(.headline)
 							.foregroundColor(AppColors.main)
-						
-						// Placeholder map view
-						ZStack {
-							Rectangle()
-								.fill(Color.gray.opacity(0.1))
-								.frame(height: 160)
-								.cornerRadius(8)
-							
-							VStack {
-								Image(systemName: "map")
-									.font(.system(size: 30))
-									.foregroundColor(.gray)
-								
-								Text("Map View")
-									.font(.subheadline)
-									.foregroundColor(.gray)
+						if let coordinate = locationManager.coordinate {
+							Map(coordinateRegion: .constant(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))), annotationItems: [IdentifiableCoordinate(coordinate: coordinate)]) { item in
+								MapMarker(coordinate: item.coordinate)
 							}
+							.frame(height: 160)
+							.cornerRadius(8)
+							.onTapGesture { showFullScreenMap = true }
+							.fullScreenCover(isPresented: $showFullScreenMap) {
+								ExpandedMapView(coordinate: coordinate, venueName: festival.name)
+							}
+						} else {
+							ProgressView("Loading map...")
+								.frame(height: 160)
 						}
 					}
 					
@@ -191,6 +205,55 @@ struct FestivalDetailView: View {
 						.background(Color.black.opacity(0.3))
 						.clipShape(Circle())
 				}
+			}
+		}
+		.onAppear {
+			locationManager.geocode(address: festival.venueAddress)
+		}
+	}
+}
+
+private struct IdentifiableCoordinate: Identifiable {
+	let id = UUID()
+	let coordinate: CLLocationCoordinate2D
+}
+
+struct ExpandedMapView: View {
+	let coordinate: CLLocationCoordinate2D
+	let venueName: String
+	@Environment(\.dismiss) private var dismiss
+	var body: some View {
+		VStack(spacing: 0) {
+			ZStack(alignment: .topLeading) {
+				Map(coordinateRegion: .constant(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))), annotationItems: [IdentifiableCoordinate(coordinate: coordinate)]) { item in
+					MapMarker(coordinate: item.coordinate)
+				}
+				.edgesIgnoringSafeArea(.all)
+				Button(action: { dismiss() }) {
+					Image(systemName: "xmark.circle.fill")
+						.font(.system(size: 32))
+						.foregroundColor(.white)
+						.shadow(radius: 4)
+						.padding()
+				}
+			}
+			Button(action: {
+				let placemark = MKPlacemark(coordinate: coordinate)
+				let mapItem = MKMapItem(placemark: placemark)
+				mapItem.name = venueName
+				mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+			}) {
+				HStack {
+					Image(systemName: "car.fill")
+					Text("Go There")
+						.fontWeight(.semibold)
+				}
+				.frame(maxWidth: .infinity)
+				.padding()
+				.background(AppColors.main)
+				.foregroundColor(.white)
+				.cornerRadius(12)
+				.padding()
 			}
 		}
 	}

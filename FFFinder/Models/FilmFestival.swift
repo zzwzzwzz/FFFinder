@@ -23,6 +23,7 @@ struct FilmFestival: Identifiable {
 	let ticketPrice: String?
 	let history: String
 	let featuredFilms: [Film]
+	let venueAddress: String
 	
 	static let samples = [
 		FilmFestival(
@@ -36,7 +37,8 @@ struct FilmFestival: Identifiable {
 			genres: ["International", "Australian", "Documentary", "Short Films"],
 			ticketPrice: "$20-25",
 			history: "Founded in 1954, the Sydney Film Festival has grown to become one of Australia's most prestigious film events, attracting filmmakers and audiences from around the world.",
-			featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Film Festival" } }
+			featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Film Festival" } },
+			venueAddress: "State Theatre, 49 Market St, Sydney NSW 2000, Australia"
 		),
 		
 		FilmFestival(name: "Flickerfest",
@@ -49,7 +51,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Short Films", "Animation", "Documentary"],
 					 ticketPrice: "$15-22",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Flickerfest" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Flickerfest" } },
+					 venueAddress: "Bondi Pavilion, Queen Elizabeth Dr, Bondi Beach NSW 2026, Australia"
+		),
 		
 		FilmFestival(name: "Japanese Film Festival",
 					 dateRange: "November 10-20, 2025",
@@ -61,7 +65,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Japanese", "International", "Animation"],
 					 ticketPrice: "$18-22",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Japanese Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Japanese Film Festival" } },
+					 venueAddress: "Event Cinemas, 505-525 George St, Sydney NSW 2000, Australia"
+		),
 		
 		FilmFestival(name: "Queer Screen Film Fest",
 					 dateRange: "September 15-25, 2025",
@@ -73,7 +79,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["LGBTQ+", "Drama", "Documentary"],
 					 ticketPrice: "$15-20",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Film Fest" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Film Fest" } },
+					 venueAddress: "Event Cinemas, 505-525 George St, Sydney NSW 2000, Australia"
+		),
 		
 		FilmFestival(name: "Sydney Underground Film Festival",
 					 dateRange: "September 12-15, 2025",
@@ -85,7 +93,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Independent", "Experimental", "Underground"],
 					 ticketPrice: "$15-25",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Underground Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Underground Film Festival" } },
+					 venueAddress: "Factory Theatre, 105 Victoria Rd, Marrickville NSW 2204, Australia"
+		),
 		
 		FilmFestival(name: "Sydney Science Fiction Film Festival",
 					 dateRange: "October 5-8, 2025",
@@ -97,7 +107,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Science Fiction", "Fantasy", "Horror"],
 					 ticketPrice: "$18-25",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Science Fiction Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Science Fiction Film Festival" } },
+					 venueAddress: "Ritz Cinema, 45 St Pauls St, Randwick NSW 2031, Australia"
+		),
 		
 		FilmFestival(name: "Sydney Women's International Film Festival",
 					 dateRange: "March 8-15, 2025",
@@ -109,7 +121,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Women Directors", "International", "Documentary"],
 					 ticketPrice: "$15-20",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Women's International Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Women's International Film Festival" } },
+					 venueAddress: "Dendy Cinemas Newtown, 261-263 King St, Newtown NSW 2042, Australia"
+		),
 		
 		FilmFestival(name: "Sydney Latin American Film Festival",
 					 dateRange: "August 15-25, 2025",
@@ -121,7 +135,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Latin American", "International", "Documentary"],
 					 ticketPrice: "$15-20",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Latin American Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Sydney Latin American Film Festival" } },
+					 venueAddress: "Dendy Cinemas Newtown, 261-263 King St, Newtown NSW 2042, Australia"
+		),
 		
 		FilmFestival(name: "Antenna Documentary Film Festival",
 					 dateRange: "February 6–16, 2025",
@@ -133,7 +149,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["Documentary", "International", "Non-Fiction"],
 					 ticketPrice: "$15–25",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Antenna Documentary Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Antenna Documentary Film Festival" } },
+					 venueAddress: "Palace Central, 28 Broadway, Chippendale NSW 2008, Australia"
+		),
 
 		FilmFestival(name: "Queer Screen Mardi Gras Film Festival",
 					 dateRange: "February 13–27, 2025",
@@ -145,7 +163,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["LGBTQ+", "Drama", "Documentary", "International"],
 					 ticketPrice: "$15–22",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Mardi Gras Film Festival" } }),
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Queer Screen Mardi Gras Film Festival" } },
+					 venueAddress: "Event Cinemas, 505-525 George St, Sydney NSW 2000, Australia"
+		),
 
 		FilmFestival(name: "Europa! Europa Film Festival",
 					 dateRange: "February 13–March 12, 2025",
@@ -157,7 +177,9 @@ struct FilmFestival: Identifiable {
 					 genres: ["European", "International", "Drama", "Comedy"],
 					 ticketPrice: "$21–26",
 					 history: "",
-					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Europa! Europa Film Festival" } })
+					 featuredFilms: Film.samples.filter { $0.awards.contains { $0.festival == "Europa! Europa Film Festival" } },
+					 venueAddress: "Ritz Cinema, 45 St Pauls St, Randwick NSW 2031, Australia"
+		)
 
 	]
 }
