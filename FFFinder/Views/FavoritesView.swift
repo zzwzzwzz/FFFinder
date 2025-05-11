@@ -138,7 +138,7 @@ struct FavoriteFilmsSection: View {
 			], spacing: 20) {
 				ForEach(viewModel.getFavoriteFilms()) { film in
 					NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
-						FilmGridItem(film: film)
+						FilmGridItem(film: film, viewModel: viewModel)
 					}
 				}
 			}
@@ -207,27 +207,31 @@ struct FestivalsGridItem: View {
 
 struct FilmGridItem: View {
 	let film: Film
+	@ObservedObject var viewModel: FestivalsViewModel
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
 			// Poster Image
-			if let posterURL = film.posterURL {
-				Image(posterURL)
-					.resizable()
-					.aspectRatio(contentMode: .fill)
-					.frame(height: 160)
-					.clipped()
-					.cornerRadius(12)
+			if let posterURL = film.posterImageURL {
+				AsyncImage(url: posterURL) { phase in
+					switch phase {
+					case .empty:
+						FilmPosterPlaceholder(title: film.title)
+					case .success(let image):
+						image
+							.resizable()
+							.aspectRatio(contentMode: .fill)
+							.frame(height: 240)
+							.clipped()
+							.cornerRadius(12)
+					case .failure:
+						FilmPosterPlaceholder(title: film.title)
+					@unknown default:
+						EmptyView()
+					}
+				}
 			} else {
-				Rectangle()
-					.fill(Color.gray.opacity(0.2))
-					.frame(height: 160)
-					.cornerRadius(12)
-					.overlay(
-						Image(systemName: "film")
-							.font(.system(size: 40))
-							.foregroundColor(.gray)
-					)
+				FilmPosterPlaceholder(title: film.title)
 			}
 			
 			// Film Info
@@ -260,6 +264,33 @@ struct FilmGridItem: View {
 		.background(Color("CardBackground"))
 		.cornerRadius(16)
 		.shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
+		.onAppear {
+			if film.tmdbPosterPath == nil {
+				Task {
+					await viewModel.fetchTMDBPoster(for: film)
+				}
+			}
+		}
+	}
+}
+
+struct PosterPlaceholder: View {
+	let title: String
+	
+	var body: some View {
+		ZStack {
+			Rectangle()
+				.fill(Color.black)
+				.frame(height: 160)
+				.cornerRadius(12)
+			
+			VStack(spacing: 12) {
+				Image(systemName: "film")
+					.font(.system(size: 32))
+					.foregroundColor(.gray)
+			}
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+		}
 	}
 }
 

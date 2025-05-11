@@ -205,12 +205,14 @@ struct FestivalDetailView: View {
 													.font(.subheadline)
 													.fontWeight(.medium)
 													.lineLimit(1)
+													.frame(maxWidth: .infinity, alignment: .leading)
 												
 												Text("\(film.year)")
 													.font(.caption)
 													.foregroundColor(.secondary)
+													.frame(maxWidth: .infinity, alignment: .leading)
 											}
-											.frame(width: 120)
+											.frame(width: 120, alignment: .leading)
 										}
 									}
 								}
