@@ -134,7 +134,7 @@ struct FestivalDetailView: View {
 						ScrollView(.horizontal, showsIndicators: false) {
 							HStack(spacing: 16) {
 								ForEach(festival.featuredFilms) { film in
-									NavigationLink(destination: FilmDetailView(film: film)) {
+									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
 										VStack(alignment: .leading) {
 											// Film poster
 											if let posterURL = film.posterURL {

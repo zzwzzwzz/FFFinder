@@ -1,3 +1,10 @@
+//
+//  Film.swift
+//  FFFinder
+//
+//  Created by ZZ on 2025.05.08.
+//
+
 import Foundation
 
 struct Film: Identifiable {
