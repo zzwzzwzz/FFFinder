@@ -16,6 +16,7 @@ class FestivalsViewModel: ObservableObject {
 	@Published var filterGenre: String?
 	
 	var cancellables = Set<AnyCancellable>()
+    var notificationVM: NotificationViewModel?
 	
 	init() {
 		loadFestivals()
@@ -42,7 +43,12 @@ class FestivalsViewModel: ObservableObject {
 			favoriteIds.remove(festival.id)
 		} else {
 			favoriteIds.insert(festival.id)
-		}
+            // send notification when add favourites
+            notificationVM?.addNotification(
+                title: "Festival Saved",
+                message: "\(festival.name) has been added to your favorites."
+                )
+            }
 	}
 	
 	func toggleFavoriteFilm(for film: Film) {

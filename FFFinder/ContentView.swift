@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = FestivalsViewModel()
+    @StateObject private var notificationVM = NotificationViewModel()
     @State private var selectedTab = 0
     
     var body: some View {
@@ -31,14 +32,18 @@ struct ContentView: View {
                 }
                 .tag(2)
             
-            ProfileView()
+            ProfileView(notificationVM: notificationVM)
                 .tabItem {
-                    Label("Profile", systemImage: "person.fill")
+                        Label("Profile", systemImage: "person.fill")
                 }
                 .tag(3)
         }
         .accentColor(AppColors.accent)
         .background(AppColors.background)
+        
+        .onAppear {
+            viewModel.notificationVM = notificationVM
+        }
     }
 }
 

@@ -14,8 +14,8 @@ struct AboutView: View {
                 .edgesIgnoringSafeArea(.all)
 
             ScrollView {
-                VStack(spacing: 24) {
-                    Spacer()
+                VStack(spacing: 30) {
+					Spacer(minLength: 80)
                     
                     Text("About Cinephiles")
                         .font(.title)
@@ -26,7 +26,7 @@ struct AboutView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
 
-                    Text("Cinephiles is a SwiftUI-powered application designed to help users discover film festivals and award-winning films. It allows you to browse, search, and favorite festivals and films from around the world.")
+                    Text("FFFinder is a SwiftUI-powered application designed to help users discover film festivals and award-winning films. It allows you to browse, search, and favorite festivals and films based in Sydney.")
                         .font(.body)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)

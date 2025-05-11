@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    @ObservedObject var notificationVM: NotificationViewModel
+    
 	var body: some View {
 		NavigationStack {
 			ZStack {
@@ -42,10 +45,15 @@ struct ProfileView: View {
 					// Settings list
 					VStack(spacing: 0) {
 						SettingsRow(icon: "gear", title: "Settings")
-						SettingsRow(icon: "bell", title: "Notifications")
+						
+                        NavigationLink(destination: NotificationView(viewModel: notificationVM)) {
+                            HStack {
+                                SettingsRow(icon: "bell", title: "Notifications")
+                            }
+                        }
                         NavigationLink(destination: HelpSupportView()) {
                                SettingsRow(icon: "questionmark.circle", title: "Help & Support")
-                           }
+                        }
                         NavigationLink(destination: AboutView()) {
                             SettingsRow(icon: "info.circle", title: "About App")
                         }
@@ -64,5 +72,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-	ProfileView()
+    ProfileView(notificationVM: NotificationViewModel())
 }
