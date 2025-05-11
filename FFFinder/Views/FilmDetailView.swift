@@ -84,7 +84,6 @@ struct FilmDetailView: View {
 							Text(film.description)
 								.font(.body)
 								.foregroundColor(.white)
-								.lineSpacing(4)
 						}
                     }
                     .padding()
