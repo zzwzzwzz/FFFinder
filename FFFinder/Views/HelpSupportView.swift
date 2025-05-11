@@ -15,11 +15,11 @@ struct HelpSupportView: View {
                 Text("Help & Support")
                     .font(.title)
                     .fontWeight(.bold)
+                    .foregroundColor(AppColors.main)
                 
                 Text("Frequently Asked Questions")
                     .font(.title2.bold())
                     .padding(.bottom, 4)
-
 
                 ForEach(faqList, id: \.question) { item in
                     FAQItem(question: item.question, answer: item.answer)
@@ -36,9 +36,7 @@ struct HelpSupportView: View {
                 HStack {
                     Image(systemName: "envelope")
                     Text("support@cinephiles.app")
-                        .foregroundColor(.blue)
                 }
-
                 Spacer(minLength: 20)
             }
             .padding()

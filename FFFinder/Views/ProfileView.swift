@@ -44,12 +44,12 @@ struct ProfileView: View {
 					
 					// Settings list
 					VStack(spacing: 0) {
-						SettingsRow(icon: "gear", title: "Settings")
+                        NavigationLink(destination: SettingsView()) {
+                            SettingsRow(icon: "gear", title: "Settings")
+                        }
 						
                         NavigationLink(destination: NotificationView(viewModel: notificationVM)) {
-                            HStack {
                                 SettingsRow(icon: "bell", title: "Notifications")
-                            }
                         }
                         NavigationLink(destination: HelpSupportView()) {
                                SettingsRow(icon: "questionmark.circle", title: "Help & Support")

@@ -11,6 +11,8 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isAuthenticated = false
+    
+    @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -33,7 +35,7 @@ struct LoginView: View {
 
               
                 Button(action: {
-                    isAuthenticated = true
+                    isLoggedIn = true
                 }) {
                     Text("Login")
                         .frame(maxWidth: .infinity)
