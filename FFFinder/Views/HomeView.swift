@@ -105,7 +105,7 @@ struct HomeView: View {
 							.padding(.vertical)
 						} else {
 							ScrollView(.horizontal, showsIndicators: false) {
-								HStack(spacing: 16) {
+								HStack(spacing: 24) {
 									ForEach(featuredFestivals) { festival in
 										NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
 											UpcomingFestivalCard(festival: festival)
@@ -114,7 +114,7 @@ struct HomeView: View {
 									}
 								}
 								.padding(.horizontal)
-								.padding(.bottom)
+								.padding(.vertical, 8)
 							}
 						}
 					}
