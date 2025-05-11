@@ -1,7 +1,15 @@
+//
+//  FilmDetailView.swift
+//  FFFinder
+//
+//  Created by ZZ on 2025.05.08.
+//
+
 import SwiftUI
 
 struct FilmDetailView: View {
     let film: Film
+    @ObservedObject var viewModel: FestivalsViewModel
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -29,15 +37,27 @@ struct FilmDetailView: View {
                     }
                     
                     // Film title overlay
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(film.title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(film.title)
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            
+                            Text("\(film.year) • Directed by \(film.director)")
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.9))
+                        }
                         
-                        Text("\(film.year) • Directed by \(film.director)")
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.9))
+                        Spacer()
+                        
+                        Button {
+                            viewModel.toggleFavoriteFilm(for: film)
+                        } label: {
+                            Image(systemName: viewModel.isFavoriteFilm(film: film) ? "heart.fill" : "heart")
+                                .font(.title3)
+                                .foregroundColor(viewModel.isFavoriteFilm(film: film) ? .red : .white)
+                        }
                     }
                     .padding()
                     .background(
@@ -172,6 +192,6 @@ struct FilmDetailView: View {
 
 #Preview {
     NavigationStack {
-        FilmDetailView(film: Film.samples[0])
+        FilmDetailView(film: Film.samples[0], viewModel: FestivalsViewModel())
     }
 } 

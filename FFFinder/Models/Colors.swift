@@ -1,3 +1,10 @@
+//
+//  Colors.swift
+//  FFFinder
+//
+//  Created by ZZ on 2025.05.07.
+//
+
 import SwiftUI
 
 struct AppColors {

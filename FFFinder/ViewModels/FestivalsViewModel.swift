@@ -11,6 +11,7 @@ import Combine
 class FestivalsViewModel: ObservableObject {
 	@Published var festivals: [FilmFestival] = []
 	@Published var favoriteIds: Set<UUID> = []
+	@Published var favoriteFilmIds: Set<UUID> = []
 	@Published var filteredFestivals: [FilmFestival] = []
 	@Published var filterGenre: String?
 	
@@ -50,12 +51,36 @@ class FestivalsViewModel: ObservableObject {
             }
 	}
 	
+	func toggleFavoriteFilm(for film: Film) {
+		if favoriteFilmIds.contains(film.id) {
+			favoriteFilmIds.remove(film.id)
+		} else {
+			favoriteFilmIds.insert(film.id)
+		}
+	}
+	
 	func isFavorite(festival: FilmFestival) -> Bool {
 		return favoriteIds.contains(festival.id)
 	}
 	
+	func isFavoriteFilm(film: Film) -> Bool {
+		return favoriteFilmIds.contains(film.id)
+	}
+	
 	func getFavoriteFestivals() -> [FilmFestival] {
 		return festivals.filter { favoriteIds.contains($0.id) }
+	}
+	
+	func getFavoriteFilms() -> [Film] {
+		var favoriteFilms: [Film] = []
+		for festival in festivals {
+			for film in festival.featuredFilms {
+				if favoriteFilmIds.contains(film.id) {
+					favoriteFilms.append(film)
+				}
+			}
+		}
+		return favoriteFilms
 	}
 	
 	func getAvailableGenres() -> [String] {
