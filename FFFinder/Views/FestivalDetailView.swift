@@ -124,8 +124,13 @@ struct FestivalDetailView: View {
 							.font(.headline)
 							.foregroundColor(AppColors.main)
 						if let coordinate = locationManager.coordinate {
-							Map(coordinateRegion: .constant(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))), annotationItems: [IdentifiableCoordinate(coordinate: coordinate)]) { item in
-								MapMarker(coordinate: item.coordinate)
+							let region = MKCoordinateRegion(
+								center: coordinate,
+								span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+							)
+							
+							Map(initialPosition: .region(region)) {
+								Marker(festival.name, coordinate: coordinate)
 							}
 							.frame(height: 160)
 							.cornerRadius(8)
@@ -225,10 +230,16 @@ struct ExpandedMapView: View {
 	var body: some View {
 		VStack(spacing: 0) {
 			ZStack(alignment: .topLeading) {
-				Map(coordinateRegion: .constant(MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))), annotationItems: [IdentifiableCoordinate(coordinate: coordinate)]) { item in
-					MapMarker(coordinate: item.coordinate)
+				let region = MKCoordinateRegion(
+					center: coordinate,
+					span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+				)
+				
+				Map(initialPosition: .region(region)) {
+					Marker(venueName, coordinate: coordinate)
 				}
 				.edgesIgnoringSafeArea(.all)
+				
 				Button(action: { dismiss() }) {
 					Image(systemName: "xmark.circle.fill")
 						.font(.system(size: 32))
