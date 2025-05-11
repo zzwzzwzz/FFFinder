@@ -94,14 +94,6 @@ struct FestivalDetailView: View {
 							.lineLimit(2)
 							.multilineTextAlignment(.leading)
 						Spacer()
-						Button(action: {
-							viewModel.toggleFavorite(for: festival)
-						}) {
-							Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
-								.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
-								.font(.title2)
-						}
-						.buttonStyle(PlainButtonStyle())
 					}
 					.frame(maxWidth: .infinity)
 					.padding(.horizontal)
@@ -236,7 +228,7 @@ struct FestivalDetailView: View {
 					isFavorite.toggle()
 				}) {
 					Image(systemName: isFavorite ? "heart.fill" : "heart")
-						.foregroundColor(isFavorite ? .red : .white)
+						.foregroundColor(isFavorite ? .red : .gray)
 						.font(.system(size: 20))
 				}
 			}
