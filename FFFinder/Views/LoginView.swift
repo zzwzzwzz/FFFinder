@@ -15,10 +15,11 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                Text("Welcome to Cinephiles")
+				
+                Text("Welcome to FFFinder")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .padding(.top, 40)
+					.padding(.top, 180)
 
                 TextField("Email", text: $email)
                     .padding()
@@ -44,7 +45,7 @@ struct LoginView: View {
 
                 Spacer()
             }
-            .padding()
+            .padding(30)
             .navigationDestination(isPresented: $isAuthenticated) {
                 ContentView()
             }
