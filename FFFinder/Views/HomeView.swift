@@ -12,8 +12,13 @@ struct HomeView: View {
 	@State private var searchText = ""
 	
 	var featuredFestivals: [FilmFestival] {
-		// Sort by date and take top 4
-		return viewModel.festivals
+		// First filter by search text if needed
+		let festivalsToConsider = searchText.isEmpty 
+			? viewModel.festivals 
+			: viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+		
+		// Then sort by date and take top 4
+		return festivalsToConsider
 			.sorted { $0.dateRange < $1.dateRange }
 			.prefix(4)
 			.map { $0 }
