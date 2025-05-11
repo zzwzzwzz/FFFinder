@@ -27,25 +27,47 @@ class FestivalLocationManager: ObservableObject {
 struct FestivalDetailView: View {
 	let festival: FilmFestival
 	@ObservedObject var viewModel: FestivalsViewModel
-	@Environment(\.dismiss) private var dismiss
-	@StateObject private var locationManager = FestivalLocationManager()
-	@State private var showFullScreenMap = false
+	@State private var isFavorite: Bool
+	@State private var showingMap = false
+	@State private var venueCoordinate: CLLocationCoordinate2D?
+	@State private var isLoading = true
+	
+	init(festival: FilmFestival, viewModel: FestivalsViewModel) {
+		self.festival = festival
+		self.viewModel = viewModel
+		_isFavorite = State(initialValue: viewModel.isFavorite(festival: festival))
+	}
 	
 	var body: some View {
 		ScrollView {
-			VStack(alignment: .leading, spacing: 0) {
+			VStack(spacing: 0) {
 				// Header Image
 				ZStack(alignment: .bottom) {
 					if let imageURL = festival.imageURL {
-						Image(imageURL)
-							.resizable()
-							.aspectRatio(contentMode: .fill)
-							.frame(height: 240)
-							.clipped()
+						AsyncImage(url: URL(string: imageURL)) { phase in
+							switch phase {
+							case .empty:
+								Rectangle()
+									.fill(Color.gray.opacity(0.2))
+									.frame(height: 300)
+							case .success(let image):
+								image
+									.resizable()
+									.aspectRatio(contentMode: .fill)
+									.frame(height: 300)
+									.clipped()
+							case .failure:
+								Rectangle()
+									.fill(Color.gray.opacity(0.2))
+									.frame(height: 300)
+							@unknown default:
+								EmptyView()
+							}
+						}
 					} else {
 						Rectangle()
 							.fill(Color.gray.opacity(0.2))
-							.frame(height: 240)
+							.frame(height: 300)
 							.overlay(
 								Image(systemName: "film")
 									.resizable()
@@ -55,38 +77,29 @@ struct FestivalDetailView: View {
 							)
 					}
 					
-					// Festival name overlay
-					HStack {
-						VStack(alignment: .leading, spacing: 4) {
-							Text(festival.name)
-								.font(.title2)
-								.fontWeight(.bold)
-								.foregroundColor(.white)
-							
-							Text(festival.dateRange)
-								.font(.subheadline)
-								.foregroundColor(.white.opacity(0.9))
-						}
-						
-						Spacer()
-						
-						Button {
-							viewModel.toggleFavorite(for: festival)
-						} label: {
-							Image(systemName: viewModel.isFavorite(festival: festival) ? "heart.fill" : "heart")
-								.font(.title3)
-								.foregroundColor(viewModel.isFavorite(festival: festival) ? .red : .white)
-						}
-					}
-					.padding()
-					.background(
-						LinearGradient(
-							gradient: Gradient(colors: [.black.opacity(0.7), .clear]),
-							startPoint: .bottom,
-							endPoint: .top
-						)
+					// Gradient overlay
+					LinearGradient(
+						gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+						startPoint: .top,
+						endPoint: .bottom
 					)
+					.frame(height: 300)
+					
+					// Festival name and date
+					VStack(alignment: .leading, spacing: 8) {
+						Text(festival.name)
+							.font(.title)
+							.fontWeight(.bold)
+							.foregroundColor(.white)
+						
+						Text(festival.dateRange)
+							.font(.subheadline)
+							.foregroundColor(.white.opacity(0.9))
+					}
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.padding()
 				}
+				.frame(height: 300)
 				
 				// Content
 				VStack(alignment: .leading, spacing: 24) {
@@ -123,7 +136,7 @@ struct FestivalDetailView: View {
 						Text("Location")
 							.font(.headline)
 							.foregroundColor(AppColors.main)
-						if let coordinate = locationManager.coordinate {
+						if let coordinate = venueCoordinate {
 							let region = MKCoordinateRegion(
 								center: coordinate,
 								span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -134,8 +147,8 @@ struct FestivalDetailView: View {
 							}
 							.frame(height: 160)
 							.cornerRadius(8)
-							.onTapGesture { showFullScreenMap = true }
-							.fullScreenCover(isPresented: $showFullScreenMap) {
+							.onTapGesture { showingMap = true }
+							.fullScreenCover(isPresented: $showingMap) {
 								ExpandedMapView(coordinate: coordinate, venueName: festival.name)
 							}
 						} else {
@@ -197,23 +210,38 @@ struct FestivalDetailView: View {
 				.padding()
 			}
 		}
-		.edgesIgnoringSafeArea(.top)
-		.navigationBarBackButtonHidden(true)
+		.ignoresSafeArea(edges: .top)
+		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
-			ToolbarItem(placement: .navigationBarLeading) {
-				Button {
-					dismiss()
-				} label: {
-					Image(systemName: "chevron.left")
-						.foregroundColor(.white)
-						.padding(8)
-						.background(Color.black.opacity(0.3))
-						.clipShape(Circle())
+			ToolbarItem(placement: .principal) {
+				EmptyView()
+			}
+			ToolbarItem(placement: .navigationBarTrailing) {
+				Button(action: {
+					viewModel.toggleFavorite(for: festival)
+					isFavorite.toggle()
+				}) {
+					Image(systemName: isFavorite ? "heart.fill" : "heart")
+						.foregroundColor(isFavorite ? .red : .white)
+						.font(.system(size: 20))
 				}
 			}
 		}
+		.toolbarBackground(.hidden, for: .navigationBar)
+		.toolbarBackground(.visible, for: .navigationBar)
 		.onAppear {
-			locationManager.geocode(address: festival.venueAddress)
+			geocodeAddress(festival.venueAddress)
+		}
+	}
+	
+	private func geocodeAddress(_ address: String) {
+		let geocoder = CLGeocoder()
+		geocoder.geocodeAddressString(address) { placemarks, error in
+			if let location = placemarks?.first?.location {
+				DispatchQueue.main.async {
+					self.venueCoordinate = location.coordinate
+				}
+			}
 		}
 	}
 }
