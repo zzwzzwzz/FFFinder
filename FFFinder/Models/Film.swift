@@ -8,16 +8,41 @@
 import Foundation
 
 struct Film: Identifiable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let year: Int
     let director: String
     let description: String
     let posterURL: String?
+    let tmdbPosterPath: String?
     let imdbURL: String
     let letterboxdURL: String
     let rottenTomatoesURL: String
     let awards: [Award]
+    
+    init(id: UUID = UUID(), title: String, year: Int, director: String, description: String, posterURL: String? = nil, tmdbPosterPath: String? = nil, imdbURL: String, letterboxdURL: String, rottenTomatoesURL: String, awards: [Award] = []) {
+        self.id = id
+        self.title = title
+        self.year = year
+        self.director = director
+        self.description = description
+        self.posterURL = posterURL
+        self.tmdbPosterPath = tmdbPosterPath
+        self.imdbURL = imdbURL
+        self.letterboxdURL = letterboxdURL
+        self.rottenTomatoesURL = rottenTomatoesURL
+        self.awards = awards
+    }
+    
+    var posterImageURL: URL? {
+        if let tmdbPath = tmdbPosterPath {
+            return TMDBService.shared.getPosterURL(path: tmdbPath)
+        }
+        if let posterURL = posterURL {
+            return URL(string: posterURL)
+        }
+        return nil
+    }
     
     struct Award: Identifiable {
         let id = UUID()

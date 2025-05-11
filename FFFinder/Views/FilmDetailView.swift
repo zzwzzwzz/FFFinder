@@ -17,12 +17,34 @@ struct FilmDetailView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Header Image
                 ZStack(alignment: .bottom) {
-                    if let posterURL = film.posterURL {
-                        Image(posterURL)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 400)
-                            .clipped()
+                    if let posterURL = film.posterImageURL {
+                        AsyncImage(url: posterURL) { phase in
+                            switch phase {
+                            case .empty:
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(height: 400)
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(height: 400)
+                                    .clipped()
+                            case .failure:
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(height: 400)
+                                    .overlay(
+                                        Image(systemName: "film")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 60)
+                                            .foregroundColor(.gray)
+                                    )
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
                     } else {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
@@ -234,6 +256,14 @@ struct FilmDetailView: View {
                         .padding(8)
                         .background(Color.black.opacity(0.3))
                         .clipShape(Circle())
+                }
+            }
+        }
+        .onAppear {
+            // Fetch TMDB poster if not already available
+            if film.tmdbPosterPath == nil {
+                Task {
+                    await viewModel.fetchTMDBPoster(for: film)
                 }
             }
         }

@@ -22,7 +22,7 @@ struct FilmFestival: Identifiable {
 	let genres: [String]
 	let ticketPrice: String?
 	let history: String
-	let featuredFilms: [Film]
+	var featuredFilms: [Film]
 	let venueAddress: String
 	
 	// Computed property to get start date from dateRange
