@@ -177,22 +177,26 @@ struct FestivalDetailView: View {
 									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
 										VStack(alignment: .leading) {
 											// Film poster
-											if let posterURL = film.posterURL {
-												Image(posterURL)
-													.resizable()
-													.aspectRatio(contentMode: .fill)
-													.frame(width: 120, height: 180)
-													.clipped()
-													.cornerRadius(8)
+											if let posterURL = film.posterImageURL {
+												AsyncImage(url: posterURL) { phase in
+													switch phase {
+													case .empty:
+														FilmPosterPlaceholder(title: film.title)
+													case .success(let image):
+														image
+															.resizable()
+															.aspectRatio(contentMode: .fill)
+															.frame(width: 120, height: 180)
+															.clipped()
+															.cornerRadius(8)
+													case .failure:
+														FilmPosterPlaceholder(title: film.title)
+													@unknown default:
+														EmptyView()
+													}
+												}
 											} else {
-												Rectangle()
-													.fill(Color.gray.opacity(0.2))
-													.frame(width: 120, height: 180)
-													.cornerRadius(8)
-													.overlay(
-														Image(systemName: "film")
-															.foregroundColor(.gray)
-													)
+												FilmPosterPlaceholder(title: film.title)
 											}
 											
 											// Film info
@@ -239,6 +243,14 @@ struct FestivalDetailView: View {
 		.toolbarBackground(.visible, for: .navigationBar)
 		.onAppear {
 			geocodeAddress(festival.venueAddress)
+			// Fetch TMDB posters for all featured films
+			for film in festival.featuredFilms {
+				if film.tmdbPosterPath == nil {
+					Task {
+						await viewModel.fetchTMDBPoster(for: film)
+					}
+				}
+			}
 		}
 	}
 	
@@ -326,6 +338,27 @@ struct InfoItem: View {
 				.fontWeight(.medium)
 		}
 		.frame(maxWidth: .infinity)
+	}
+}
+
+struct FilmPosterPlaceholder: View {
+	let title: String
+	
+	var body: some View {
+		ZStack {
+			Rectangle()
+				.fill(Color.black)
+				.frame(width: 120, height: 180)
+				.cornerRadius(8)
+			
+			VStack(spacing: 12) {
+				Image(systemName: "film")
+					.font(.system(size: 32))
+					.foregroundColor(.gray)
+				
+			}
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+		}
 	}
 }
 
