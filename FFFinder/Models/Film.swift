@@ -54,6 +54,25 @@ struct Film: Identifiable {
     
     static let samples: [Film] = [
         // Sydney Film Festival Winners
+		Film(
+			title: "There's Still Tomorrow",
+			year: 2024,
+			director: "Paola Cortellesi",
+			description: "In postwar Rome, Delia, a working-class housewife trapped in an abusive marriage, receives a mysterious letter that ignites her courage to envision a better future.",
+			posterURL: "theres_still_tomorrow.png",
+			imdbURL: "https://www.imdb.com/title/tt21800162/",
+			letterboxdURL: "https://letterboxd.com/film/theres-still-tomorrow/",
+			rottenTomatoesURL: "https://www.rottentomatoes.com/m/theres_still_tomorrow",
+			awards: [
+				Award(
+					award: "Sydney Film Prize",
+					year: 2024,
+					festival: "Sydney Film Festival",
+					festivalURL: "https://www.sff.org.au"
+				)
+			]
+		),
+
         Film(
             title: "The New Boy",
             year: 2023,

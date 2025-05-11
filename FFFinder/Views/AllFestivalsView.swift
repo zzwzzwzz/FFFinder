@@ -11,17 +11,22 @@ struct AllFestivalsView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @State private var searchText = ""
     @State private var selectedGenre: String?
-    @State private var sortOption: SortOption = .name
+    @State private var sortOption: SortOption = .popularity
     @State private var showFilter = false
+    @State private var selectedTab = 0
     
     enum SortOption: String, CaseIterable {
+        case popularity = "Popularity"
         case name = "Name"
         case date = "Date"
-        case popularity = "Popularity"
     }
     
     var genres: [String] {
-        Array(Set(viewModel.festivals.flatMap { $0.genres })).sorted()
+        if selectedTab == 0 {
+            return Array(Set(viewModel.festivals.flatMap { $0.genres })).sorted()
+        } else {
+            return [] // No genres for films
+        }
     }
     
     var filteredFestivals: [FilmFestival] {
@@ -53,14 +58,52 @@ struct AllFestivalsView: View {
         return result
     }
     
+    var filteredFilms: [Film] {
+        var result = viewModel.festivals.flatMap { $0.featuredFilms }
+        
+        // Apply search filter
+        if !searchText.isEmpty {
+            result = result.filter { film in
+                film.title.localizedCaseInsensitiveContains(searchText) ||
+                film.director.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+        
+        // Apply sorting
+        switch sortOption {
+        case .name:
+            result.sort { $0.title < $1.title }
+        case .date:
+            result.sort { $0.year > $1.year }
+        case .popularity:
+            result.sort { $0.awards.count > $1.awards.count }
+        }
+        
+        return result
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                // Tab Selector
+                HStack(spacing: 0) {
+                    TabButton(title: "Festivals", isSelected: selectedTab == 0) {
+                        selectedTab = 0
+                    }
+                    
+                    TabButton(title: "Films", isSelected: selectedTab == 1) {
+                        selectedTab = 1
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+                
                 // Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(AppColors.main)
-                    TextField("Search festivals", text: $searchText)
+                    TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
                         .font(.body)
                     
                     if !searchText.isEmpty {
@@ -80,24 +123,32 @@ struct AllFestivalsView: View {
                         .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
                 )
                 .padding(.horizontal)
-                .padding(.top, 8)
+                .padding(.bottom, 8)
                 
-                // Festival Grid
+                // Content Grid
                 ScrollView {
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 16),
                         GridItem(.flexible(), spacing: 16)
                     ], spacing: 16) {
-                        ForEach(filteredFestivals) { festival in
-                            NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-                                FestivalGridItem(festival: festival)
+                        if selectedTab == 0 {
+                            ForEach(filteredFestivals) { festival in
+                                NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                    FestivalGridItem(festival: festival)
+                                }
+                            }
+                        } else {
+                            ForEach(filteredFilms) { film in
+                                NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+                                    FilmGridItem(film: film, viewModel: viewModel)
+                                }
                             }
                         }
                     }
                     .padding()
                 }
             }
-            .navigationTitle("All Festivals")
+            .navigationTitle(selectedTab == 0 ? "All Festivals" : "All Films")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {

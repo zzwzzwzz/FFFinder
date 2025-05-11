@@ -113,11 +113,11 @@ struct FestivalDetailView: View {
 				VStack(alignment: .leading, spacing: 24) {
 					// Quick Info
 					HStack(spacing: 0) {
-						InfoItem(icon: "calendar", label: "Established", value: "\(festival.established)")
+						InfoItem(icon: "calendar", value: "Since \(festival.established)")
 						Divider()
-						InfoItem(icon: "mappin.and.ellipse", label: "Location", value: festival.location)
+						InfoItem(icon: "mappin.and.ellipse", value: festival.location)
 						Divider()
-						InfoItem(icon: "link", label: "Website", value: "Visit")
+						InfoItem(icon: "link",value: "Website")
 							.onTapGesture {
 								if let url = URL(string: festival.website) {
 									UIApplication.shared.open(url)
@@ -137,32 +137,6 @@ struct FestivalDetailView: View {
 							.font(.body)
 							.foregroundColor(.secondary)
 							.lineSpacing(4)
-					}
-					
-					// Map Section
-					VStack(alignment: .leading, spacing: 12) {
-						Text("Location")
-							.font(.headline)
-							.foregroundColor(AppColors.main)
-						if let coordinate = venueCoordinate {
-							let region = MKCoordinateRegion(
-								center: coordinate,
-								span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-							)
-							
-							Map(initialPosition: .region(region)) {
-								Marker(festival.name, coordinate: coordinate)
-							}
-							.frame(height: 160)
-							.cornerRadius(8)
-							.onTapGesture { showingMap = true }
-							.fullScreenCover(isPresented: $showingMap) {
-								ExpandedMapView(coordinate: coordinate, venueName: festival.name)
-							}
-						} else {
-							ProgressView("Loading map...")
-								.frame(height: 160)
-						}
 					}
 					
 					// Featured Films Section
@@ -218,6 +192,32 @@ struct FestivalDetailView: View {
 								}
 							}
 							.padding(.horizontal, 4)
+						}
+					}
+					
+					// Map Section
+					VStack(alignment: .leading, spacing: 12) {
+						Text("Location")
+							.font(.headline)
+							.foregroundColor(AppColors.main)
+						if let coordinate = venueCoordinate {
+							let region = MKCoordinateRegion(
+								center: coordinate,
+								span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+							)
+							
+							Map(initialPosition: .region(region)) {
+								Marker(festival.name, coordinate: coordinate)
+							}
+							.frame(height: 160)
+							.cornerRadius(8)
+							.onTapGesture { showingMap = true }
+							.fullScreenCover(isPresented: $showingMap) {
+								ExpandedMapView(coordinate: coordinate, venueName: festival.name)
+							}
+						} else {
+							ProgressView("Loading map...")
+								.frame(height: 160)
 						}
 					}
 				}
@@ -322,7 +322,6 @@ struct ExpandedMapView: View {
 
 struct InfoItem: View {
 	let icon: String
-	let label: String
 	let value: String
 	
 	var body: some View {
@@ -330,10 +329,6 @@ struct InfoItem: View {
 			Image(systemName: icon)
 				.font(.system(size: 20))
 				.foregroundColor(AppColors.main)
-			
-			Text(label)
-				.font(.caption)
-				.foregroundColor(.secondary)
 			
 			Text(value)
 				.font(.subheadline)
