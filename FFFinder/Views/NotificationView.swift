@@ -31,7 +31,6 @@ struct NotificationView: View {
                 }
                 .padding(.horizontal)
 
-                // 通知列表
                 ForEach(viewModel.notifications) { notification in
                     Button(action: {
                         viewModel.markAsRead(notification)
