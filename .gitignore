@@ -1,0 +1,20 @@
+# macOS system files
+.DS_Store
+
+# Node modules (if applicable)
+node_modules/
+
+# IDE/editor configs
+.vscode/
+.idea/
+
+# OS-specific or backup files
+Thumbs.db
+*.log
+*.swp
+*.bak
+
+# User-specific Xcode workspace and UI state
+*.xcuserstate
+*.xcuserdata/
+*.xcworkspace/xcuserdata/
