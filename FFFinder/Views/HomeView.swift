@@ -17,19 +17,28 @@ struct HomeView: View {
 			? viewModel.festivals 
 			: viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
 		
-		// Then sort by date and take top 4
+		// Get current date
+		let today = Date()
+		
+		// Filter for festivals that start on or after today, and sort by start date
 		return festivalsToConsider
-			.sorted { $0.dateRange < $1.dateRange }
+			.filter { $0.startDate >= today }
+			.sorted { $0.startDate < $1.startDate }
 			.prefix(4)
 			.map { $0 }
 	}
 	
 	var filteredFestivals: [FilmFestival] {
-		if searchText.isEmpty {
-			return viewModel.festivals
-		} else {
-			return viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-		}
+		let festivals = searchText.isEmpty 
+			? viewModel.festivals 
+			: viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+		
+		// Only show festivals that start on or after today
+		let today = Date()
+		
+		return festivals
+			.filter { $0.startDate >= today }
+			.sorted { $0.startDate < $1.startDate }
 	}
 	
 	var body: some View {
@@ -80,22 +89,33 @@ struct HomeView: View {
 					
 					// Featured festivals section
 					VStack(alignment: .leading) {
-						Text("Featured Festivals")
+						Text("Upcoming Festivals")
 							.font(.headline)
 							.padding(.horizontal)
 							.padding(.top)
 						
-						ScrollView(.horizontal, showsIndicators: false) {
-							HStack(spacing: 16) {
-								ForEach(featuredFestivals) { festival in
-									NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-										UpcomingFestivalCard(festival: festival)
-									}
-									.buttonStyle(PlainButtonStyle())
-								}
+						if featuredFestivals.isEmpty {
+							VStack(alignment: .center) {
+								Text("No upcoming festivals found")
+									.font(.subheadline)
+									.foregroundColor(.secondary)
+									.padding()
 							}
-							.padding(.horizontal)
-							.padding(.bottom)
+							.frame(maxWidth: .infinity)
+							.padding(.vertical)
+						} else {
+							ScrollView(.horizontal, showsIndicators: false) {
+								HStack(spacing: 16) {
+									ForEach(featuredFestivals) { festival in
+										NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+											UpcomingFestivalCard(festival: festival)
+										}
+										.buttonStyle(PlainButtonStyle())
+									}
+								}
+								.padding(.horizontal)
+								.padding(.bottom)
+							}
 						}
 					}
 					

@@ -25,6 +25,87 @@ struct FilmFestival: Identifiable {
 	let featuredFilms: [Film]
 	let venueAddress: String
 	
+	// Computed property to get start date from dateRange
+	var startDate: Date {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "MMMM d"
+		
+		// Support both hyphen-minus '-' and en dash '–' as range delimiters
+		let delimiters = ["-", "–"]
+		var startDateString = dateRange
+		for delimiter in delimiters {
+			if let range = dateRange.range(of: delimiter) {
+				startDateString = String(dateRange[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+				break
+			}
+		}
+		
+		// Extract year
+		var year = Calendar.current.component(.year, from: Date())
+		if let yearRange = dateRange.range(of: ", ") {
+			if let extractedYear = Int(dateRange[yearRange.upperBound...].trimmingCharacters(in: .whitespaces)) {
+				year = extractedYear
+			}
+		}
+		
+		// Combine to create full date string
+		let fullDateString = "\(startDateString), \(year)"
+		formatter.dateFormat = "MMMM d, yyyy"
+		
+		// Return parsed date or current date if parsing fails
+		return formatter.date(from: fullDateString) ?? Date()
+	}
+	
+	// Computed property to get end date from dateRange
+	var endDate: Date {
+		let formatter = DateFormatter()
+		let delimiters = ["-", "–"]
+		var endMonthDay = ""
+		var year = Calendar.current.component(.year, from: Date())
+		var afterDelimiter: Substring? = nil
+		for delimiter in delimiters {
+			if let rangeDelimiter = dateRange.range(of: delimiter) {
+				afterDelimiter = dateRange[rangeDelimiter.upperBound...]
+				break
+			}
+		}
+		if let afterDelimiter = afterDelimiter {
+			// Check if there's a year in the string
+			if let yearDelimiter = dateRange.range(of: ", ") {
+				if let extractedYear = Int(dateRange[yearDelimiter.upperBound...].trimmingCharacters(in: .whitespaces)) {
+					year = extractedYear
+				}
+				if let endDayRange = afterDelimiter.range(of: ", ") {
+					endMonthDay = String(afterDelimiter[..<endDayRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+				} else {
+					endMonthDay = String(afterDelimiter).trimmingCharacters(in: .whitespaces)
+				}
+			} else {
+				endMonthDay = String(afterDelimiter).trimmingCharacters(in: .whitespaces)
+			}
+		} else {
+			return startDate
+		}
+		if let _ = Int(endMonthDay) {
+			let startMonth = dateRange.components(separatedBy: " ").first ?? ""
+			endMonthDay = "\(startMonth) \(endMonthDay)"
+		}
+		let fullEndDateString = "\(endMonthDay), \(year)"
+		formatter.dateFormat = "MMMM d, yyyy"
+		if let endDate = formatter.date(from: fullEndDateString) {
+			return endDate
+		}
+		formatter.dateFormat = "MMMM d, yyyy"
+		return formatter.date(from: fullEndDateString) ?? startDate
+	}
+	
+	// Computed property to determine if the festival is upcoming
+	var isUpcoming: Bool {
+		let now = Date()
+		// A festival is considered upcoming if its end date is in the future
+		return endDate >= now
+	}
+	
 	static let samples = [
 		FilmFestival(
 			name: "Sydney Film Festival",
