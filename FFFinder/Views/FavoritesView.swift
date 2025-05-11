@@ -178,21 +178,24 @@ struct FestivalsGridItem: View {
 					.font(.headline)
 					.lineLimit(2)
 					.foregroundColor(.primary)
-					.frame(height: 44, alignment: .top)
+					.frame(height: 44, alignment: .topLeading)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.multilineTextAlignment(.leading)
 				
 				Text(festival.dateRange)
 					.font(.subheadline)
 					.foregroundColor(.secondary)
 					.lineLimit(1)
 					.frame(height: 20)
+					.frame(maxWidth: .infinity, alignment: .leading)
 				
 				Text(festival.location)
 					.font(.caption)
 					.foregroundColor(.secondary)
 					.lineLimit(1)
 					.frame(height: 16)
+					.frame(maxWidth: .infinity, alignment: .leading)
 			}
-			.padding(.horizontal, 4)
 		}
 		.frame(width: UIScreen.main.bounds.width / 2 - 40)
 		.padding(12)
@@ -233,21 +236,24 @@ struct FilmGridItem: View {
 					.font(.headline)
 					.lineLimit(2)
 					.foregroundColor(.primary)
-					.frame(height: 44, alignment: .top)
+					.frame(height: 44, alignment: .topLeading)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.multilineTextAlignment(.leading)
 				
 				Text("\(film.year)")
 					.font(.subheadline)
 					.foregroundColor(.secondary)
 					.lineLimit(1)
 					.frame(height: 20)
+					.frame(maxWidth: .infinity, alignment: .leading)
 				
 				Text(film.director)
 					.font(.caption)
 					.foregroundColor(.secondary)
 					.lineLimit(1)
 					.frame(height: 16)
+					.frame(maxWidth: .infinity, alignment: .leading)
 			}
-			.padding(.horizontal, 4)
 		}
 		.frame(width: UIScreen.main.bounds.width / 2 - 40)
 		.padding(12)
