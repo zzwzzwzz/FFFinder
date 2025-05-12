@@ -20,16 +20,16 @@ struct ProfileView: View {
 				VStack(spacing: 20) {
 					// Profile header
 					VStack {
-						Circle()
-							.fill(Color.gray.opacity(0.3))
+						Image("profile")
+							.resizable()
+							.scaledToFill()
 							.frame(width: 100, height: 100)
+							.clipShape(Circle())
 							.overlay(
-								Image(systemName: "person.fill")
-									.resizable()
-									.scaledToFit()
-									.foregroundColor(.gray)
-									.padding(24)
+								Circle()
+									.stroke(Color.white, lineWidth: 2)
 							)
+							.shadow(radius: 3)
 							.padding(.top, 20)
 						
 						Text("User Name")
