@@ -77,7 +77,7 @@ struct ProfileView: View {
 						.font(.footnote)
 						.foregroundColor(.secondary)
 						.frame(maxWidth: .infinity)
-						.padding(.bottom, 12)
+						.padding(.bottom, 40)
 				}
 				.padding(.top)
 			}
