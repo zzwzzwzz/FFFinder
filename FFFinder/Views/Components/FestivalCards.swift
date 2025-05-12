@@ -74,7 +74,7 @@ struct UpcomingFestivalCard: View {
 						}
 					}
 				}
-				.frame(width: 220, alignment: .leading)
+				.frame(maxWidth: .infinity, alignment: .leading)
 				.padding(8)
 				.background(
 					LinearGradient(
