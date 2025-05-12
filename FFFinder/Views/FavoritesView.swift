@@ -24,6 +24,7 @@ struct FavoritesView: View {
 						Text("Your Favorites")
 							.font(.title)
 							.fontWeight(.bold)
+							.foregroundColor(AppColors.main)
 						
 						Spacer()
 						

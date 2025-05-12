@@ -39,6 +39,10 @@ struct FestivalDetailView: View {
 		_isFavorite = State(initialValue: viewModel.isFavorite(festival: festival))
 	}
 	
+	private var topSafeAreaInset: CGFloat {
+		(UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets.top ?? 44
+	}
+	
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 0) {
@@ -98,7 +102,7 @@ struct FestivalDetailView: View {
 						}
 						.padding(.trailing, 16)
 					}
-					.padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
+					.padding(.top, topSafeAreaInset)
 					.frame(width: UIScreen.main.bounds.width)
 					// Festival name at bottom
 					VStack {

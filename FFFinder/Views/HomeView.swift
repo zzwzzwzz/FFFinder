@@ -9,17 +9,13 @@ import SwiftUI
 
 struct HomeView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
-	@State private var searchText = ""
+	@State private var showSearch = false
 	
 	var featuredFestivals: [FilmFestival] {
-		// First filter by search text if needed
-		let festivalsToConsider = searchText.isEmpty 
-			? viewModel.festivals 
-			: viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-		
+		// Only use all festivals, no searchText
+		let festivalsToConsider = viewModel.festivals
 		// Get current date
 		let today = Date()
-		
 		// Filter for festivals that start on or after today, and sort by start date
 		return festivalsToConsider
 			.filter { $0.startDate >= today }
@@ -35,13 +31,9 @@ struct HomeView: View {
 	}
 	
 	var filteredFestivals: [FilmFestival] {
-		let festivals = searchText.isEmpty 
-			? viewModel.festivals 
-			: viewModel.festivals.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
-		
+		let festivals = viewModel.festivals
 		// Only show festivals that start on or after today
 		let today = Date()
-		
 		return festivals
 			.filter { $0.startDate >= today }
 			.sorted { $0.startDate < $1.startDate }
@@ -57,50 +49,48 @@ struct HomeView: View {
 				VStack {
 					// Header
 					HStack {
-						Text("FILM FESTIVALS")
-							.font(.title2)
-							.fontWeight(.bold)
-						Text("FINDER")
-							.font(.title2)
-							.fontWeight(.light)
+						// App logo
+						ZStack {
+							Circle()
+								.fill(AppColors.main.opacity(0.15))
+								.frame(width: 44, height: 44)
+							Image("AppLogo")
+								.resizable()
+								.scaledToFill()
+								.frame(width: 40, height: 40)
+								.clipShape(Circle())
+						}
+						.overlay(
+							Circle()
+								.stroke(AppColors.main, lineWidth: 2)
+								.frame(width: 44, height: 44)
+						)
+						
+						Text("FFFinder")
+							.font(.title)
+							.bold(true)
+							.foregroundColor(AppColors.main)
+						
 						Spacer()
+						
+						Button(action: { showSearch = true }) {
+							Image(systemName: "magnifyingglass")
+								.font(.title2)
+								.foregroundColor(AppColors.main)
+								.padding(10)
+								.background(AppColors.background)
+								.clipShape(Circle())
+						}
 					}
 					.padding(.horizontal)
 					.padding(.top, 8)
-					
-					// Search bar
-					HStack {
-						Image(systemName: "magnifyingglass")
-							.foregroundColor(AppColors.main)
-						TextField("Search festivals", text: $searchText)
-							.font(.body)
-							.autocorrectionDisabled()
-							.textInputAutocapitalization(.never)
-						
-						if !searchText.isEmpty {
-							Button {
-								searchText = ""
-							} label: {
-								Image(systemName: "xmark.circle.fill")
-									.foregroundColor(AppColors.main)
-							}
-						}
-					}
-					.padding(10)
-					.background(AppColors.background)
-					.cornerRadius(10)
-					.overlay(
-						RoundedRectangle(cornerRadius: 10)
-							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
-					)
-					.padding(.horizontal)
 					
 					// Featured festivals section
 					VStack(alignment: .leading) {
 						Text("Upcoming Festivals")
 							.font(.headline)
 							.padding(.horizontal)
-							.padding(.top)
+							.padding(.top, 5)
 						
 						if featuredFestivals.isEmpty {
 							VStack(alignment: .center) {
@@ -142,6 +132,8 @@ struct HomeView: View {
 							}
 						}
 						.padding(.horizontal)
+						.padding(.top, 5)
+						.padding(.bottom, 5)
 						
 						ScrollView {
 							LazyVGrid(columns: [
@@ -160,6 +152,10 @@ struct HomeView: View {
 				}
 			}
 			.navigationBarHidden(true)
+			// Present SearchView when search icon tapped
+			.sheet(isPresented: $showSearch) {
+				SearchView(viewModel: viewModel)
+			}
 		}
 	}
 }

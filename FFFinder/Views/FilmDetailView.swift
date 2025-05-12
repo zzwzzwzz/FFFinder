@@ -12,6 +12,10 @@ struct FilmDetailView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @Environment(\.dismiss) private var dismiss
     
+    private var topSafeAreaInset: CGFloat {
+        (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets.top ?? 44
+    }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -93,7 +97,7 @@ struct FilmDetailView: View {
                         }
                         .padding(.trailing, 16)
                     }
-                    .padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
+                    .padding(.top, topSafeAreaInset)
                     .frame(width: UIScreen.main.bounds.width)
                     // Film title at bottom
                     VStack {
