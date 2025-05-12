@@ -11,7 +11,7 @@ struct AllFestivalsView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @State private var searchText = ""
     @State private var selectedGenre: String?
-    @State private var sortOption: SortOption = .name
+    @State private var sortOption: SortOption = .name  // Default to name sorting in UI
     @State private var showFilter = false
     @State private var selectedTab: Int
     
@@ -50,15 +50,8 @@ struct AllFestivalsView: View {
             result = result.filter { $0.genres.contains(selectedGenre) }
         }
         
-        // Apply sorting based on selected sort option
-        switch sortOption {
-        case .name:
-            result.sort { $0.name < $1.name }
-        case .date:
-            result.sort { $0.startDate < $1.startDate }
-        case .popularity:
-            result.sort { $0.established < $1.established }
-        }
+        // Always sort by name
+        result.sort { $0.name < $1.name }
         
         return result
     }
@@ -74,15 +67,8 @@ struct AllFestivalsView: View {
             }
         }
         
-        // Apply sorting based on selected sort option
-        switch sortOption {
-        case .name:
-            result.sort { $0.title < $1.title }
-        case .date:
-            result.sort { $0.year > $1.year }
-        case .popularity:
-            result.sort { $0.awards.count > $1.awards.count }
-        }
+        // Always sort by popularity (award count)
+        result.sort { $0.awards.count > $1.awards.count }
         
         return result
     }
