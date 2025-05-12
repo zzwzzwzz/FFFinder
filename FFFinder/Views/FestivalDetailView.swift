@@ -31,6 +31,7 @@ struct FestivalDetailView: View {
 	@State private var showingMap = false
 	@State private var venueCoordinate: CLLocationCoordinate2D?
 	@State private var isLoading = true
+	@Environment(\.dismiss) private var dismiss
 	
 	init(festival: FilmFestival, viewModel: FestivalsViewModel) {
 		self.festival = festival
@@ -42,32 +43,17 @@ struct FestivalDetailView: View {
 		ScrollView {
 			VStack(spacing: 0) {
 				// Header Image
-				ZStack(alignment: .bottom) {
+				ZStack(alignment: .top) {
 					if let imageURL = festival.imageURL {
-						AsyncImage(url: URL(string: imageURL)) { phase in
-							switch phase {
-							case .empty:
-								Rectangle()
-									.fill(Color.gray.opacity(0.2))
-									.frame(height: 300)
-							case .success(let image):
-								image
-									.resizable()
-									.aspectRatio(contentMode: .fill)
-									.frame(height: 300)
-									.clipped()
-							case .failure:
-								Rectangle()
-									.fill(Color.gray.opacity(0.2))
-									.frame(height: 300)
-							@unknown default:
-								EmptyView()
-							}
-						}
+						Image(imageURL)
+							.resizable()
+							.aspectRatio(1, contentMode: .fill)
+							.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+							.clipped()
 					} else {
 						Rectangle()
 							.fill(Color.gray.opacity(0.2))
-							.frame(height: 300)
+							.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 							.overlay(
 								Image(systemName: "film")
 									.resizable()
@@ -76,30 +62,62 @@ struct FestivalDetailView: View {
 									.foregroundColor(.gray)
 							)
 					}
-					
-					// Gradient overlay
-					LinearGradient(
-						gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
-						startPoint: .top,
-						endPoint: .bottom
-					)
-					.frame(height: 300)
-					
-					// Festival name and favorite icon
-					HStack(alignment: .center, spacing: 0) {
-						Text(festival.name)
-							.font(.title2)
-							.fontWeight(.semibold)
-							.foregroundColor(.white)
-							.lineLimit(2)
-							.multilineTextAlignment(.leading)
+					// Gradient overlay at bottom for text readability
+					VStack {
 						Spacer()
+						LinearGradient(
+							gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+							startPoint: .top,
+							endPoint: .bottom
+						)
+						.frame(height: 120)
 					}
-					.frame(maxWidth: .infinity)
-					.padding(.horizontal)
-					.padding(.bottom, 12)
+					.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+					// Custom top bar
+					HStack {
+						Button(action: {
+							dismiss()
+						}) {
+							Image(systemName: "chevron.left")
+								.foregroundColor(.white)
+								.padding(10)
+								.background(Color.black.opacity(0.3))
+								.clipShape(Circle())
+						}
+						.padding(.leading, 16)
+						Spacer()
+						Button(action: {
+							viewModel.toggleFavorite(for: festival)
+							isFavorite.toggle()
+						}) {
+							Image(systemName: isFavorite ? "heart.fill" : "heart")
+								.foregroundColor(isFavorite ? .red : .white)
+								.padding(10)
+								.background(Color.black.opacity(0.3))
+								.clipShape(Circle())
+						}
+						.padding(.trailing, 16)
+					}
+					.padding(.top, UIApplication.shared.windows.first?.safeAreaInsets.top ?? 44)
+					.frame(width: UIScreen.main.bounds.width)
+					// Festival name at bottom
+					VStack {
+						Spacer()
+						HStack(alignment: .bottom) {
+							Text(festival.name)
+								.font(.title2)
+								.fontWeight(.semibold)
+								.foregroundColor(.white)
+								.lineLimit(2)
+								.multilineTextAlignment(.leading)
+								.padding(.horizontal)
+								.padding(.bottom, 16)
+							Spacer()
+						}
+					}
+					.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 				}
-				.frame(height: 300)
+				.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 				
 				// Content
 				VStack(alignment: .leading, spacing: 24) {
@@ -218,23 +236,7 @@ struct FestivalDetailView: View {
 		}
 		.ignoresSafeArea(edges: .top)
 		.navigationBarTitleDisplayMode(.inline)
-		.toolbar {
-			ToolbarItem(placement: .principal) {
-				EmptyView()
-			}
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Button(action: {
-					viewModel.toggleFavorite(for: festival)
-					isFavorite.toggle()
-				}) {
-					Image(systemName: isFavorite ? "heart.fill" : "heart")
-						.foregroundColor(isFavorite ? .red : .gray)
-						.font(.system(size: 20))
-				}
-			}
-		}
-		.toolbarBackground(.hidden, for: .navigationBar)
-		.toolbarBackground(.visible, for: .navigationBar)
+		.toolbar(.hidden, for: .navigationBar)
 		.onAppear {
 			geocodeAddress(festival.venueAddress)
 			// Fetch TMDB posters for all featured films
