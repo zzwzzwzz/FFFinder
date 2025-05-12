@@ -11,7 +11,7 @@ struct AllFestivalsView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @State private var searchText = ""
     @State private var selectedGenre: String?
-    @State private var sortOption: SortOption = .popularity
+    @State private var sortOption: SortOption = .name
     @State private var showFilter = false
     @State private var selectedTab: Int
     
@@ -50,15 +50,8 @@ struct AllFestivalsView: View {
             result = result.filter { $0.genres.contains(selectedGenre) }
         }
         
-        // Apply sorting
-        switch sortOption {
-        case .name:
-            result.sort { $0.name < $1.name }
-        case .date:
-            result.sort { $0.dateRange < $1.dateRange }
-        case .popularity:
-            result.sort { $0.established < $1.established }
-        }
+        // Always sort festivals alphabetically
+        result.sort { $0.name < $1.name }
         
         return result
     }
@@ -74,15 +67,8 @@ struct AllFestivalsView: View {
             }
         }
         
-        // Apply sorting
-        switch sortOption {
-        case .name:
-            result.sort { $0.title < $1.title }
-        case .date:
-            result.sort { $0.year > $1.year }
-        case .popularity:
-            result.sort { $0.awards.count > $1.awards.count }
-        }
+        // Always sort films by popularity (number of awards)
+        result.sort { $0.awards.count > $1.awards.count }
         
         return result
     }
@@ -102,7 +88,7 @@ struct AllFestivalsView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
-                .padding(.bottom, 16)
+                .padding(.bottom, 8)
                 
                 // Search Bar
                 HStack {
@@ -150,7 +136,8 @@ struct AllFestivalsView: View {
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
                 }
             }
             .navigationTitle(selectedTab == 0 ? "All Festivals" : "All Films")
@@ -184,16 +171,27 @@ struct FestivalGridItem: View {
         VStack(alignment: .leading) {
             // Festival image
             ZStack(alignment: .bottomLeading) {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay(
-                        Image(systemName: "film")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40)
-                            .foregroundColor(.gray)
-                    )
+                if let imageURL = festival.imageURL {
+                    Image(imageURL)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 160)
+                        .background(Color("CardBackground"))
+                        .cornerRadius(12)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(height: 160)
+                        .cornerRadius(12)
+                        .overlay(
+                            Image(systemName: "film")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundColor(.gray)
+                        )
+                }
                 
                 // Date badge
                 Text(festival.dateRange)

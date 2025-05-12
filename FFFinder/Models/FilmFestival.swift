@@ -254,7 +254,7 @@ struct FilmFestival: Identifiable {
 					 website: "https://www.europafilmfestival.com.au",
 					 location: "Ritz Cinemas, Randwick",
 					 established: 2022,
-					 imageURL: "EEFF_logo",
+					 imageURL: "EEFF_logo4",
 					 genres: ["European", "International", "Drama", "Comedy"],
 					 ticketPrice: "$21–26",
 					 history: "",
