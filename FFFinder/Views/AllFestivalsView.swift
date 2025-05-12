@@ -50,8 +50,16 @@ struct AllFestivalsView: View {
             result = result.filter { $0.genres.contains(selectedGenre) }
         }
         
-        // Always sort by name
-        result.sort { $0.name < $1.name }
+        // Sort by selected option
+        switch sortOption {
+        case .name:
+            result.sort { $0.name < $1.name }
+        case .date:
+            result.sort { $0.startDate < $1.startDate }
+        case .popularity:
+            // Sort by number of featured films (or another popularity metric)
+            result.sort { $0.featuredFilms.count > $1.featuredFilms.count }
+        }
         
         return result
     }
@@ -67,8 +75,15 @@ struct AllFestivalsView: View {
             }
         }
         
-        // Always sort by popularity (award count)
-        result.sort { $0.awards.count > $1.awards.count }
+        // Sort by selected option
+        switch sortOption {
+        case .popularity:
+            result.sort { $0.awards.count > $1.awards.count }
+        case .name:
+            result.sort { $0.title < $1.title }
+        case .date:
+            result.sort { $0.year > $1.year } // Most recent first
+        }
         
         return result
     }
