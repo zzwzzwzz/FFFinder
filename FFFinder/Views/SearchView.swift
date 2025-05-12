@@ -12,6 +12,7 @@ struct SearchView: View {
 	@State private var searchText = ""
 	@State private var selectedGenre: String?
 	@State private var selectedTab: Int = 0 // 0 = Festivals, 1 = Films
+	@Environment(\.dismiss) private var dismiss
 	
 	var genres: [String] {
 		viewModel.getAvailableGenres()
@@ -45,14 +46,21 @@ struct SearchView: View {
 				Color.white.ignoresSafeArea()
 				VStack(spacing: 0) {
 					// Header
-					Text("Search")
-						.font(.largeTitle)
-						.fontWeight(.bold)
-						.foregroundColor(AppColors.main)
-						.frame(maxWidth: .infinity, alignment: .leading)
-						.padding(.horizontal)
-						.padding(.top, 24)
-						.padding(.bottom, 10)
+					HStack {
+						Text("Search")
+							.font(.largeTitle)
+							.fontWeight(.bold)
+							.foregroundColor(AppColors.main)
+						Spacer()
+						Button(action: { dismiss() }) {
+							Image(systemName: "xmark.circle.fill")
+								.font(.title2)
+								.foregroundColor(AppColors.main)
+						}
+					}
+					.padding(.horizontal)
+					.padding(.top, 24)
+					.padding(.bottom, 10)
 					
 					// Search field
 					HStack {
