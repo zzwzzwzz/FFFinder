@@ -105,36 +105,36 @@ struct AllFestivalsView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 16)
                 
-                // Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(AppColors.main)
-                    TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
-                        .font(.body)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                    
-                    if !searchText.isEmpty {
-                        Button {
-                            searchText = ""
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(AppColors.main)
-                        }
-                    }
-                }
-                .padding(10)
-                .background(AppColors.background)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
-                )
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-                
                 // Content Grid
                 ScrollView {
+					// Search Bar
+					HStack {
+						Image(systemName: "magnifyingglass")
+							.foregroundColor(AppColors.main)
+						TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
+							.font(.body)
+							.autocorrectionDisabled()
+							.textInputAutocapitalization(.never)
+						
+						if !searchText.isEmpty {
+							Button {
+								searchText = ""
+							} label: {
+								Image(systemName: "xmark.circle.fill")
+									.foregroundColor(AppColors.main)
+							}
+						}
+					}
+					.padding(10)
+					.background(AppColors.background)
+					.cornerRadius(10)
+					.overlay(
+						RoundedRectangle(cornerRadius: 10)
+							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
+					)
+					.padding(.horizontal)
+					.padding(.bottom, 10)
+					
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 16),
                         GridItem(.flexible(), spacing: 16)
