@@ -11,7 +11,7 @@ struct AllFestivalsView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @State private var searchText = ""
     @State private var selectedGenre: String?
-    @State private var sortOption: SortOption = .name  // Default to name sorting in UI
+    @State private var sortOption: SortOption = .popularity  // Default to popularity sorting in UI
     @State private var showFilter = false
     @State private var selectedTab: Int
     
@@ -103,7 +103,7 @@ struct AllFestivalsView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
-                .padding(.bottom, 8)
+                .padding(.bottom, 16)
                 
                 // Search Bar
                 HStack {
@@ -131,7 +131,7 @@ struct AllFestivalsView: View {
                         .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
                 )
                 .padding(.horizontal)
-                .padding(.bottom, 8)
+                .padding(.bottom, 10)
                 
                 // Content Grid
                 ScrollView {
@@ -157,9 +157,14 @@ struct AllFestivalsView: View {
                     .padding(.top, 8)
                 }
             }
-            .navigationTitle(selectedTab == 0 ? "All Festivals" : "All Films")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+				ToolbarItem(placement: .principal) {
+					Text(selectedTab == 0 ? "All Festivals" : "All Films")
+						.font(.system(.title, weight: .bold))
+						.foregroundColor(AppColors.main)
+				}
+				
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showFilter = true
