@@ -14,12 +14,10 @@ struct ProfileView: View {
 	var body: some View {
 		NavigationStack {
 			ZStack {
-				Color("BackgroundColor")
-					.edgesIgnoringSafeArea(.all)
-				
-				VStack(spacing: 20) {
-					// Profile header
-					VStack {
+				Color.white.ignoresSafeArea()
+				VStack(spacing: 24) {
+					// Profile card
+					VStack(spacing: 16) {
 						Image("profile")
 							.resizable()
 							.scaledToFill()
@@ -27,42 +25,59 @@ struct ProfileView: View {
 							.clipShape(Circle())
 							.overlay(
 								Circle()
-									.stroke(Color.white, lineWidth: 2)
+									.stroke(AppColors.main, lineWidth: 3)
 							)
-							.shadow(radius: 3)
-							.padding(.top, 20)
+							.shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+							.padding(.top, 24)
 						
 						Text("User Name")
 							.font(.title2)
 							.fontWeight(.bold)
-							.padding(.top, 8)
+							.foregroundColor(AppColors.main)
 						
 						Text("Sydney, Australia")
 							.foregroundColor(.secondary)
 					}
-					.padding(.bottom, 20)
+					.frame(maxWidth: .infinity)
+					.padding(.vertical, 24)
+					.cornerRadius(20)
+					.padding(.horizontal)
 					
-					// Settings list
-					VStack(spacing: 0) {
-                        NavigationLink(destination: SettingsView()) {
-                            SettingsRow(icon: "gear", title: "Settings")
-                        }
+					// Settings list card
+					VStack(spacing: 8) {
+						NavigationLink(destination: SettingsView()) {
+							SettingsRow(icon: "gear", title: "Settings")
+						}
 						
-                        NavigationLink(destination: NotificationView(viewModel: notificationVM)) {
-                                SettingsRow(icon: "bell", title: "Notifications")
-                        }
-                        NavigationLink(destination: HelpSupportView()) {
-                               SettingsRow(icon: "questionmark.circle", title: "Help & Support")
-                        }
-                        NavigationLink(destination: AboutView()) {
-                            SettingsRow(icon: "info.circle", title: "About App")
-                        }
+						Divider()
+						
+						NavigationLink(destination: NotificationView(viewModel: notificationVM)) {
+							SettingsRow(icon: "bell", title: "Notifications")
+						}
+						
+						Divider()
+						
+						NavigationLink(destination: HelpSupportView()) {
+							SettingsRow(icon: "questionmark.circle", title: "Help & Support")
+						}
+						
+						Divider()
+						
+						NavigationLink(destination: AboutView()) {
+							SettingsRow(icon: "info.circle", title: "About App")
+						}
 					}
-					.background(Color("CardBackground"))
-					.cornerRadius(12)
+					.background(Color(.white))
+					.cornerRadius(16)
+					.shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
 					.padding(.horizontal)
 					
 					Spacer()
+					Text("© 2025 FFFinder. All rights reserved.")
+						.font(.footnote)
+						.foregroundColor(.secondary)
+						.frame(maxWidth: .infinity)
+						.padding(.bottom, 12)
 				}
 				.padding(.top)
 			}
