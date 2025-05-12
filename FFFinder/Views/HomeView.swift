@@ -91,6 +91,7 @@ struct HomeView: View {
 							.font(.headline)
 							.padding(.horizontal)
 							.padding(.top, 5)
+							.foregroundColor(AppColors.main)
 						
 						if featuredFestivals.isEmpty {
 							VStack(alignment: .center) {
@@ -122,6 +123,7 @@ struct HomeView: View {
 						HStack {
 							Text("Featured Films")
 								.font(.headline)
+								.foregroundColor(AppColors.main)
 							
 							Spacer()
 							

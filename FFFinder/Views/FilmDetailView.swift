@@ -211,56 +211,41 @@ struct FilmDetailView: View {
                     
                     // External Links
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("More")
+                        Text("Links")
                             .font(.headline)
                             .foregroundColor(AppColors.main)
-                        
-                        VStack(spacing: 12) {
-                            Link(destination: URL(string: film.imdbURL)!) {
-                                HStack {
-                                    Image("imdb_logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 24)
-                                    Text("View on IMDb")
-                                        .foregroundColor(AppColors.main)
-                                    Spacer()
-                                    Image(systemName: "arrow.up.right")
-                                        .foregroundColor(AppColors.main)
-                                }
-                            }
-                            
-                            Link(destination: URL(string: film.letterboxdURL)!) {
-                                HStack {
-                                    Image("letterboxd_logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 24)
-                                    Text("View on Letterboxd")
-                                        .foregroundColor(AppColors.main)
-                                    Spacer()
-                                    Image(systemName: "arrow.up.right")
-                                        .foregroundColor(AppColors.main)
-                                }
-                            }
-                            
-                            Link(destination: URL(string: film.rottenTomatoesURL)!) {
-                                HStack {
-                                    Image("rt_logo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 24)
-                                    Text("View on Rotten Tomatoes")
-                                        .foregroundColor(AppColors.main)
-                                    Spacer()
-                                    Image(systemName: "arrow.up.right")
-                                        .foregroundColor(AppColors.main)
+                        HStack(spacing: 32) {
+                            ForEach(ExternalLink.allCases, id: \.self) { link in
+                                if let url = link.url(for: film) {
+                                    Link(destination: url) {
+                                        VStack(spacing: 6) {
+                                            ZStack {
+                                                Circle()
+                                                    .fill(Color(.systemGray6))
+                                                    .frame(width: 54, height: 54)
+                                                    .shadow(color: .black.opacity(0.07), radius: 4, x: 0, y: 2)
+                                                Image(link.iconName)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 32, height: 32)
+                                            }
+                                            Text(link.label)
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .contentShape(Rectangle())
+                                        .buttonStyle(PlainButtonStyle())
+                                        .opacity(0.95)
+                                        .scaleEffect(1.0)
+                                        .animation(.easeInOut(duration: 0.15), value: UUID())
+                                    }
                                 }
                             }
                         }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color(.systemGray5))
+                        .cornerRadius(16)
                     }
                 }
                 .padding()
@@ -292,5 +277,31 @@ struct AwardButtonStyle: ButtonStyle {
 #Preview {
     NavigationStack {
         FilmDetailView(film: Film.samples[0], viewModel: FestivalsViewModel())
+    }
+}
+
+enum ExternalLink: CaseIterable {
+    case imdb, letterboxd, rotten
+    
+    var iconName: String {
+        switch self {
+        case .imdb: return "imdb_logo"
+        case .letterboxd: return "letterboxd_logo"
+        case .rotten: return "rt_logo"
+        }
+    }
+    var label: String {
+        switch self {
+        case .imdb: return "IMDb"
+        case .letterboxd: return "Letterboxd"
+        case .rotten: return "Rotten Tomato"
+        }
+    }
+    func url(for film: Film) -> URL? {
+        switch self {
+        case .imdb: return URL(string: film.imdbURL)
+        case .letterboxd: return URL(string: film.letterboxdURL)
+        case .rotten: return URL(string: film.rottenTomatoesURL)
+        }
     }
 } 
