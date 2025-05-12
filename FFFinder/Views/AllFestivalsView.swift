@@ -96,6 +96,8 @@ struct AllFestivalsView: View {
                         .foregroundColor(AppColors.main)
                     TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
                         .font(.body)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
                     
                     if !searchText.isEmpty {
                         Button {

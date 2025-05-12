@@ -74,6 +74,8 @@ struct HomeView: View {
 							.foregroundColor(AppColors.main)
 						TextField("Search festivals", text: $searchText)
 							.font(.body)
+							.autocorrectionDisabled()
+							.textInputAutocapitalization(.never)
 						
 						if !searchText.isEmpty {
 							Button {
