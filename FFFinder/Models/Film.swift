@@ -8,16 +8,41 @@
 import Foundation
 
 struct Film: Identifiable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let year: Int
     let director: String
     let description: String
     let posterURL: String?
+    let tmdbPosterPath: String?
     let imdbURL: String
     let letterboxdURL: String
     let rottenTomatoesURL: String
     let awards: [Award]
+    
+    init(id: UUID = UUID(), title: String, year: Int, director: String, description: String, posterURL: String? = nil, tmdbPosterPath: String? = nil, imdbURL: String, letterboxdURL: String, rottenTomatoesURL: String, awards: [Award] = []) {
+        self.id = id
+        self.title = title
+        self.year = year
+        self.director = director
+        self.description = description
+        self.posterURL = posterURL
+        self.tmdbPosterPath = tmdbPosterPath
+        self.imdbURL = imdbURL
+        self.letterboxdURL = letterboxdURL
+        self.rottenTomatoesURL = rottenTomatoesURL
+        self.awards = awards
+    }
+    
+    var posterImageURL: URL? {
+        if let tmdbPath = tmdbPosterPath {
+            return TMDBService.shared.getPosterURL(path: tmdbPath)
+        }
+        if let posterURL = posterURL {
+            return URL(string: posterURL)
+        }
+        return nil
+    }
     
     struct Award: Identifiable {
         let id = UUID()
@@ -29,12 +54,31 @@ struct Film: Identifiable {
     
     static let samples: [Film] = [
         // Sydney Film Festival Winners
+		Film(
+			title: "There's Still Tomorrow",
+			year: 2024,
+			director: "Paola Cortellesi",
+			description: "In postwar Rome, Delia, a working-class housewife trapped in an abusive marriage, receives a mysterious letter that ignites her courage to envision a better future.",
+			posterURL: "theres_still_tomorrow.png",
+			imdbURL: "https://www.imdb.com/title/tt21800162/",
+			letterboxdURL: "https://letterboxd.com/film/theres-still-tomorrow/",
+			rottenTomatoesURL: "https://www.rottentomatoes.com/m/theres_still_tomorrow",
+			awards: [
+				Award(
+					award: "Sydney Film Prize",
+					year: 2024,
+					festival: "Sydney Film Festival",
+					festivalURL: "https://www.sff.org.au"
+				)
+			]
+		),
+
         Film(
             title: "The New Boy",
             year: 2023,
             director: "Warwick Thornton",
             description: "In 1940s Australia, a 9-year-old Aboriginal orphan boy arrives at a remote monastery run by a renegade nun. The new boy's presence disturbs the delicately balanced world in this story of spiritual struggle and the cost of survival.",
-            posterURL: "new_boy_poster",
+            posterURL: "the_new_boy.png",
             imdbURL: "https://www.imdb.com/title/tt18180926/",
             letterboxdURL: "https://letterboxd.com/film/the-new-boy-2023/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_new_boy_2023",
@@ -52,7 +96,7 @@ struct Film: Identifiable {
             year: 2022,
             director: "Goran Stolevski",
             description: "In an isolated mountain village in 19th century Macedonia, a young girl is taken from her mother and transformed into a witch by an ancient spirit. Curious about life as a human, the witch accidentally kills a villager and uses her body to live among humans.",
-            posterURL: "you_wont_be_alone_poster",
+            posterURL: "you_wont_be_alone.png",
             imdbURL: "https://www.imdb.com/title/tt8296030/",
             letterboxdURL: "https://letterboxd.com/film/you-wont-be-alone/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/you_wont_be_alone",
@@ -70,7 +114,7 @@ struct Film: Identifiable {
             year: 2021,
             director: "Leah Purcell",
             description: "A searing Australian western thriller that follows Molly Johnson and her children in the harsh Australian alpine country in 1893. Molly is preparing her four children for the absence of their drover husband, when a shackled Aboriginal man breaks his bindings and interrupts her dinner.",
-            posterURL: "drovers_wife_poster",
+            posterURL: "the_drovers_wife.png",
             imdbURL: "https://www.imdb.com/title/tt11162490/",
             letterboxdURL: "https://letterboxd.com/film/the-drovers-wife-the-legend-of-molly-johnson/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/the_drovers_wife_the_legend_of_molly_johnson",
@@ -88,7 +132,7 @@ struct Film: Identifiable {
             year: 2020,
             director: "Emma Seligman",
             description: "A college student runs into her sugar daddy and his wife at a Jewish funeral service with her parents.",
-            posterURL: "shiva_baby_poster",
+            posterURL: "shiva_baby_poster.png",
             imdbURL: "https://www.imdb.com/title/tt11317142/",
             letterboxdURL: "https://letterboxd.com/film/shiva-baby/",
             rottenTomatoesURL: "https://www.rottentomatoes.com/m/shiva_baby",

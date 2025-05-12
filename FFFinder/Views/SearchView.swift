@@ -11,6 +11,8 @@ struct SearchView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
 	@State private var searchText = ""
 	@State private var selectedGenre: String?
+	@State private var selectedTab: Int = 0 // 0 = Festivals, 1 = Films
+	@Environment(\.dismiss) private var dismiss
 	
 	var genres: [String] {
 		viewModel.getAvailableGenres()
@@ -30,27 +32,44 @@ struct SearchView: View {
 		return festivals
 	}
 	
+	var filteredFilms: [Film] {
+		var films = viewModel.festivals.flatMap { $0.featuredFilms }
+		if !searchText.isEmpty {
+			films = films.filter { $0.title.localizedCaseInsensitiveContains(searchText) || $0.director.localizedCaseInsensitiveContains(searchText) }
+		}
+		return films
+	}
+	
 	var body: some View {
 		NavigationStack {
 			ZStack {
-				Color("BackgroundColor")
-					.edgesIgnoringSafeArea(.all)
-				
+				Color.white.ignoresSafeArea()
 				VStack(spacing: 0) {
-					// Search header
-					Text("Discover Festivals")
-						.font(.title)
-						.fontWeight(.bold)
-						.frame(maxWidth: .infinity, alignment: .leading)
-						.padding()
+					// Header
+					HStack {
+						Text("Search")
+							.font(.largeTitle)
+							.fontWeight(.bold)
+							.foregroundColor(AppColors.main)
+						Spacer()
+						Button(action: { dismiss() }) {
+							Image(systemName: "xmark.circle.fill")
+								.font(.title2)
+								.foregroundColor(AppColors.main)
+						}
+					}
+					.padding(.horizontal)
+					.padding(.top, 24)
+					.padding(.bottom, 10)
 					
 					// Search field
 					HStack {
 						Image(systemName: "magnifyingglass")
 							.foregroundColor(AppColors.main)
-						TextField("Search festivals", text: $searchText)
+						TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
 							.font(.body)
-						
+							.autocorrectionDisabled()
+							.textInputAutocapitalization(.never)
 						if !searchText.isEmpty {
 							Button {
 								searchText = ""
@@ -68,79 +87,148 @@ struct SearchView: View {
 							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
 					)
 					.padding(.horizontal)
+					.padding(.bottom, 8)
 					
-					// Genre filters
-					ScrollView(.horizontal, showsIndicators: false) {
-						HStack(spacing: 10) {
-							Button(action: {
-								selectedGenre = nil
-							}) {
-								Text("All")
-									.padding(.horizontal, 16)
-									.padding(.vertical, 8)
-									.background(
-										selectedGenre == nil ?
-										AppColors.main : AppColors.background
-									)
-									.foregroundColor(
-										selectedGenre == nil ? .white : AppColors.main
-									)
-									.cornerRadius(20)
-							}
-							
-							ForEach(genres, id: \.self) { genre in
-								Button(action: {
-									if selectedGenre == genre {
-										selectedGenre = nil
-									} else {
-										selectedGenre = genre
-									}
-								}) {
-									Text(genre)
-										.padding(.horizontal, 16)
-										.padding(.vertical, 8)
-										.background(
-											selectedGenre == genre ?
-											AppColors.main : AppColors.background
-										)
-										.foregroundColor(
-											selectedGenre == genre ? .white : AppColors.main
-										)
-										.cornerRadius(20)
-								}
-							}
-						}
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-					}
 					
 					// Results
-					if filteredFestivals.isEmpty {
-						VStack {
-							Spacer()
-							Image(systemName: "film.stack")
-								.font(.system(size: 60))
-								.foregroundColor(.gray)
-							Text("No festivals found")
-								.font(.title2)
-								.foregroundColor(.gray)
-								.padding(.top)
-							Spacer()
+					if selectedTab == 0 {
+						if filteredFestivals.isEmpty {
+							EmptySearchPlaceholder(type: "festivals")
+						} else {
+							List {
+								ForEach(filteredFestivals) { festival in
+									NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+										FestivalListItemWithLogo(festival: festival)
+									}
+									.listRowBackground(Color("CardBackground"))
+								}
+							}
+							.listStyle(.plain)
 						}
 					} else {
-						List {
-							ForEach(filteredFestivals) { festival in
-								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-									FestivalListItem(festival: festival)
+						if filteredFilms.isEmpty {
+							EmptySearchPlaceholder(type: "films")
+						} else {
+							List {
+								ForEach(filteredFilms) { film in
+									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+										FilmListItem(film: film, viewModel: viewModel)
+									}
+									.listRowBackground(Color("CardBackground"))
 								}
-								.listRowBackground(Color("CardBackground"))
 							}
+							.listStyle(.plain)
 						}
-						.listStyle(.plain)
 					}
 				}
 			}
 			.navigationBarHidden(true)
+		}
+	}
+}
+
+// List item for festivals with logo
+struct FestivalListItemWithLogo: View {
+	let festival: FilmFestival
+	var body: some View {
+		HStack(spacing: 16) {
+			if let imageName = festival.imageURL {
+				Image(imageName)
+					.resizable()
+					.aspectRatio(contentMode: .fit)
+					.frame(width: 50, height: 50)
+					.background(Color(.systemGray6))
+					.clipShape(RoundedRectangle(cornerRadius: 12))
+			} else {
+				Rectangle()
+					.fill(Color.gray.opacity(0.2))
+					.frame(width: 50, height: 50)
+					.cornerRadius(12)
+					.overlay(
+						Image(systemName: "film")
+							.foregroundColor(.gray)
+					)
+			}
+			VStack(alignment: .leading, spacing: 4) {
+				Text(festival.name)
+					.font(.headline)
+				Text(festival.dateRange)
+					.font(.subheadline)
+					.foregroundColor(.secondary)
+				Text(festival.location)
+					.font(.caption)
+					.foregroundColor(.secondary)
+			}
+			Spacer()
+		}
+		.padding(.vertical, 8)
+	}
+}
+
+// List item for films with TMDB poster
+struct FilmListItem: View {
+	let film: Film
+	@ObservedObject var viewModel: FestivalsViewModel
+	var body: some View {
+		HStack(spacing: 16) {
+			if let posterURL = film.posterImageURL {
+				AsyncImage(url: posterURL) { phase in
+					switch phase {
+					case .empty:
+						FilmPosterPlaceholder(title: film.title)
+					case .success(let image):
+						image
+							.resizable()
+							.aspectRatio(2/3, contentMode: .fill)
+							.frame(width: 50, height: 75)
+							.clipped()
+							.cornerRadius(8)
+					case .failure:
+						FilmPosterPlaceholder(title: film.title)
+					@unknown default:
+						EmptyView()
+					}
+				}
+			} else {
+				FilmPosterPlaceholder(title: film.title)
+			}
+			VStack(alignment: .leading, spacing: 4) {
+				Text(film.title)
+					.font(.headline)
+				Text("\(film.year)")
+					.font(.subheadline)
+					.foregroundColor(.secondary)
+				Text(film.director)
+					.font(.caption)
+					.foregroundColor(.secondary)
+			}
+			Spacer()
+		}
+		.padding(.vertical, 8)
+		.onAppear {
+			if film.tmdbPosterPath == nil {
+				Task {
+					await viewModel.fetchTMDBPoster(for: film)
+				}
+			}
+		}
+	}
+}
+
+// Placeholder for empty search
+struct EmptySearchPlaceholder: View {
+	let type: String
+	var body: some View {
+		VStack {
+			Spacer()
+			Image(systemName: type == "films" ? "film" : "film.stack")
+				.font(.system(size: 60))
+				.foregroundColor(.gray)
+			Text("No \(type) found")
+				.font(.title2)
+				.foregroundColor(.gray)
+				.padding(.top)
+			Spacer()
 		}
 	}
 }

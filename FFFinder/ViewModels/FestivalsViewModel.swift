@@ -97,4 +97,37 @@ class FestivalsViewModel: ObservableObject {
 	func findFestivalByName(_ name: String) -> FilmFestival? {
 		return festivals.first(where: { $0.name == name })
 	}
+	
+	@MainActor
+	func fetchTMDBPoster(for film: Film) async {
+		do {
+			if let tmdbMovie = try await TMDBService.shared.searchMovie(title: film.title) {
+				// Update the film with TMDB data
+				if let index = festivals.firstIndex(where: { festival in
+					festival.featuredFilms.contains(where: { $0.id == film.id })
+				}) {
+					if let filmIndex = festivals[index].featuredFilms.firstIndex(where: { $0.id == film.id }) {
+						var updatedFilm = festivals[index].featuredFilms[filmIndex]
+						updatedFilm = Film(
+							id: updatedFilm.id,
+							title: updatedFilm.title,
+							year: updatedFilm.year,
+							director: updatedFilm.director,
+							description: updatedFilm.description,
+							posterURL: updatedFilm.posterURL,
+							tmdbPosterPath: tmdbMovie.posterPath,
+							imdbURL: updatedFilm.imdbURL,
+							letterboxdURL: updatedFilm.letterboxdURL,
+							rottenTomatoesURL: updatedFilm.rottenTomatoesURL,
+							awards: updatedFilm.awards
+						)
+						festivals[index].featuredFilms[filmIndex] = updatedFilm
+						objectWillChange.send()
+					}
+				}
+			}
+		} catch {
+			print("Error fetching TMDB data: \(error)")
+		}
+	}
 }

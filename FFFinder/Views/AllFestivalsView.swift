@@ -11,17 +11,27 @@ struct AllFestivalsView: View {
     @ObservedObject var viewModel: FestivalsViewModel
     @State private var searchText = ""
     @State private var selectedGenre: String?
-    @State private var sortOption: SortOption = .name
+    @State private var sortOption: SortOption = .popularity  // Default to popularity sorting in UI
     @State private var showFilter = false
+    @State private var selectedTab: Int
+    
+    init(viewModel: FestivalsViewModel, initialTab: Int = 0) {
+        self.viewModel = viewModel
+        _selectedTab = State(initialValue: initialTab)
+    }
     
     enum SortOption: String, CaseIterable {
+        case popularity = "Popularity"
         case name = "Name"
         case date = "Date"
-        case popularity = "Popularity"
     }
     
     var genres: [String] {
-        Array(Set(viewModel.festivals.flatMap { $0.genres })).sorted()
+        if selectedTab == 0 {
+            return Array(Set(viewModel.festivals.flatMap { $0.genres })).sorted()
+        } else {
+            return [] // No genres for films
+        }
     }
     
     var filteredFestivals: [FilmFestival] {
@@ -40,14 +50,39 @@ struct AllFestivalsView: View {
             result = result.filter { $0.genres.contains(selectedGenre) }
         }
         
-        // Apply sorting
+        // Sort by selected option
         switch sortOption {
         case .name:
             result.sort { $0.name < $1.name }
         case .date:
-            result.sort { $0.dateRange < $1.dateRange }
+            result.sort { $0.startDate < $1.startDate }
         case .popularity:
-            result.sort { $0.established < $1.established }
+            // Sort by number of featured films (or another popularity metric)
+            result.sort { $0.featuredFilms.count > $1.featuredFilms.count }
+        }
+        
+        return result
+    }
+    
+    var filteredFilms: [Film] {
+        var result = viewModel.festivals.flatMap { $0.featuredFilms }
+        
+        // Apply search filter
+        if !searchText.isEmpty {
+            result = result.filter { film in
+                film.title.localizedCaseInsensitiveContains(searchText) ||
+                film.director.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+        
+        // Sort by selected option
+        switch sortOption {
+        case .popularity:
+            result.sort { $0.awards.count > $1.awards.count }
+        case .name:
+            result.sort { $0.title < $1.title }
+        case .date:
+            result.sort { $0.year > $1.year } // Most recent first
         }
         
         return result
@@ -56,50 +91,80 @@ struct AllFestivalsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Search Bar
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(AppColors.main)
-                    TextField("Search festivals", text: $searchText)
-                        .font(.body)
+                // Tab Selector
+                HStack(spacing: 0) {
+                    TabButton(title: "Festivals", isSelected: selectedTab == 0) {
+                        selectedTab = 0
+                    }
                     
-                    if !searchText.isEmpty {
-                        Button {
-                            searchText = ""
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(AppColors.main)
-                        }
+                    TabButton(title: "Films", isSelected: selectedTab == 1) {
+                        selectedTab = 1
                     }
                 }
-                .padding(10)
-                .background(AppColors.background)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(AppColors.main.opacity(0.3), lineWidth: 1)
-                )
                 .padding(.horizontal)
                 .padding(.top, 8)
+                .padding(.bottom, 16)
                 
-                // Festival Grid
+                // Content Grid
                 ScrollView {
+					// Search Bar
+					HStack {
+						Image(systemName: "magnifyingglass")
+							.foregroundColor(AppColors.main)
+						TextField(selectedTab == 0 ? "Search festivals" : "Search films", text: $searchText)
+							.font(.body)
+							.autocorrectionDisabled()
+							.textInputAutocapitalization(.never)
+						
+						if !searchText.isEmpty {
+							Button {
+								searchText = ""
+							} label: {
+								Image(systemName: "xmark.circle.fill")
+									.foregroundColor(AppColors.main)
+							}
+						}
+					}
+					.padding(10)
+					.background(AppColors.background)
+					.cornerRadius(10)
+					.overlay(
+						RoundedRectangle(cornerRadius: 10)
+							.stroke(AppColors.main.opacity(0.3), lineWidth: 1)
+					)
+					.padding(.horizontal)
+					.padding(.bottom, 10)
+					
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 16),
                         GridItem(.flexible(), spacing: 16)
                     ], spacing: 16) {
-                        ForEach(filteredFestivals) { festival in
-                            NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-                                FestivalGridItem(festival: festival)
+                        if selectedTab == 0 {
+                            ForEach(filteredFestivals) { festival in
+                                NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                    FestivalGridItem(festival: festival)
+                                }
+                            }
+                        } else {
+                            ForEach(filteredFilms) { film in
+                                NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+                                    FilmGridItem(film: film, viewModel: viewModel)
+                                }
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
                 }
             }
-            .navigationTitle("All Festivals")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+				ToolbarItem(placement: .principal) {
+					Text(selectedTab == 0 ? "All Festivals" : "All Films")
+						.font(.system(.title, weight: .bold))
+						.foregroundColor(AppColors.main)
+				}
+				
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showFilter = true
@@ -128,16 +193,27 @@ struct FestivalGridItem: View {
         VStack(alignment: .leading) {
             // Festival image
             ZStack(alignment: .bottomLeading) {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay(
-                        Image(systemName: "film")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 40)
-                            .foregroundColor(.gray)
-                    )
+                if let imageURL = festival.imageURL {
+                    Image(imageURL)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 160)
+                        .background(Color("CardBackground"))
+                        .cornerRadius(12)
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(height: 160)
+                        .cornerRadius(12)
+                        .overlay(
+                            Image(systemName: "film")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 40)
+                                .foregroundColor(.gray)
+                        )
+                }
                 
                 // Date badge
                 Text(festival.dateRange)

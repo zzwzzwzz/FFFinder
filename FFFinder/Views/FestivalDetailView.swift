@@ -31,6 +31,7 @@ struct FestivalDetailView: View {
 	@State private var showingMap = false
 	@State private var venueCoordinate: CLLocationCoordinate2D?
 	@State private var isLoading = true
+	@Environment(\.dismiss) private var dismiss
 	
 	init(festival: FilmFestival, viewModel: FestivalsViewModel) {
 		self.festival = festival
@@ -38,36 +39,25 @@ struct FestivalDetailView: View {
 		_isFavorite = State(initialValue: viewModel.isFavorite(festival: festival))
 	}
 	
+	private var topSafeAreaInset: CGFloat {
+		(UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.safeAreaInsets.top ?? 44
+	}
+	
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 0) {
 				// Header Image
-				ZStack(alignment: .bottom) {
+				ZStack(alignment: .top) {
 					if let imageURL = festival.imageURL {
-						AsyncImage(url: URL(string: imageURL)) { phase in
-							switch phase {
-							case .empty:
-								Rectangle()
-									.fill(Color.gray.opacity(0.2))
-									.frame(height: 300)
-							case .success(let image):
-								image
-									.resizable()
-									.aspectRatio(contentMode: .fill)
-									.frame(height: 300)
-									.clipped()
-							case .failure:
-								Rectangle()
-									.fill(Color.gray.opacity(0.2))
-									.frame(height: 300)
-							@unknown default:
-								EmptyView()
-							}
-						}
+						Image(imageURL)
+							.resizable()
+							.aspectRatio(1, contentMode: .fill)
+							.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+							.clipped()
 					} else {
 						Rectangle()
 							.fill(Color.gray.opacity(0.2))
-							.frame(height: 300)
+							.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 							.overlay(
 								Image(systemName: "film")
 									.resizable()
@@ -76,40 +66,72 @@ struct FestivalDetailView: View {
 									.foregroundColor(.gray)
 							)
 					}
-					
-					// Gradient overlay
-					LinearGradient(
-						gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
-						startPoint: .top,
-						endPoint: .bottom
-					)
-					.frame(height: 300)
-					
-					// Festival name and date
-					VStack(alignment: .leading, spacing: 8) {
-						Text(festival.name)
-							.font(.title)
-							.fontWeight(.bold)
-							.foregroundColor(.white)
-						
-						Text(festival.dateRange)
-							.font(.subheadline)
-							.foregroundColor(.white.opacity(0.9))
+					// Gradient overlay at bottom for text readability
+					VStack {
+						Spacer()
+						LinearGradient(
+							gradient: Gradient(colors: [.clear, .black.opacity(0.7)]),
+							startPoint: .top,
+							endPoint: .bottom
+						)
+						.frame(height: 120)
 					}
-					.frame(maxWidth: .infinity, alignment: .leading)
-					.padding()
+					.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
+					// Custom top bar
+					HStack {
+						Button(action: {
+							dismiss()
+						}) {
+							Image(systemName: "chevron.left")
+								.foregroundColor(.white)
+								.padding(10)
+								.background(Color.black.opacity(0.3))
+								.clipShape(Circle())
+						}
+						.padding(.leading, 16)
+						Spacer()
+						Button(action: {
+							viewModel.toggleFavorite(for: festival)
+							isFavorite.toggle()
+						}) {
+							Image(systemName: isFavorite ? "heart.fill" : "heart")
+								.foregroundColor(isFavorite ? .red : .white)
+								.padding(10)
+								.background(Color.black.opacity(0.3))
+								.clipShape(Circle())
+						}
+						.padding(.trailing, 16)
+					}
+					.padding(.top, topSafeAreaInset)
+					.frame(width: UIScreen.main.bounds.width)
+					// Festival name at bottom
+					VStack {
+						Spacer()
+						HStack(alignment: .bottom) {
+							Text(festival.name)
+								.font(.title2)
+								.fontWeight(.semibold)
+								.foregroundColor(.white)
+								.lineLimit(2)
+								.multilineTextAlignment(.leading)
+								.padding(.horizontal)
+								.padding(.bottom, 16)
+							Spacer()
+						}
+					}
+					.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 				}
-				.frame(height: 300)
+				.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width)
 				
 				// Content
 				VStack(alignment: .leading, spacing: 24) {
 					// Quick Info
 					HStack(spacing: 0) {
-						InfoItem(icon: "calendar", label: "Established", value: "\(festival.established)")
+						InfoItem(icon: "calendar", value: "Since \(festival.established)")
 						Divider()
-						InfoItem(icon: "mappin.and.ellipse", label: "Location", value: festival.location)
+						InfoItem(icon: "mappin.and.ellipse", value: festival.location)
 						Divider()
-						InfoItem(icon: "link", label: "Website", value: "Visit")
+						InfoItem(icon: "link",value: "Website")
 							.onTapGesture {
 								if let url = URL(string: festival.website) {
 									UIApplication.shared.open(url)
@@ -129,6 +151,62 @@ struct FestivalDetailView: View {
 							.font(.body)
 							.foregroundColor(.secondary)
 							.lineSpacing(4)
+					}
+					
+					// Featured Films Section
+					VStack(alignment: .leading, spacing: 12) {
+						Text("Recent Winners")
+							.font(.headline)
+							.foregroundColor(AppColors.main)
+						
+						ScrollView(.horizontal, showsIndicators: false) {
+							HStack(spacing: 16) {
+								ForEach(festival.featuredFilms) { film in
+									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+										VStack(alignment: .leading) {
+											// Film poster
+											if let posterURL = film.posterImageURL {
+												AsyncImage(url: posterURL) { phase in
+													switch phase {
+													case .empty:
+														FilmPosterPlaceholder(title: film.title)
+													case .success(let image):
+														image
+															.resizable()
+															.aspectRatio(contentMode: .fill)
+															.frame(width: 120, height: 180)
+															.clipped()
+															.cornerRadius(8)
+													case .failure:
+														FilmPosterPlaceholder(title: film.title)
+													@unknown default:
+														EmptyView()
+													}
+												}
+											} else {
+												FilmPosterPlaceholder(title: film.title)
+											}
+											
+											// Film info
+											VStack(alignment: .leading, spacing: 4) {
+												Text(film.title)
+													.font(.subheadline)
+													.fontWeight(.medium)
+													.lineLimit(1)
+													.frame(maxWidth: .infinity, alignment: .leading)
+												
+												Text("\(film.year)")
+													.font(.caption)
+													.foregroundColor(.secondary)
+													.frame(maxWidth: .infinity, alignment: .leading)
+											}
+											.frame(width: 120, alignment: .leading)
+										}
+									}
+								}
+							}
+							.padding(.horizontal, 4)
+						}
 					}
 					
 					// Map Section
@@ -156,81 +234,23 @@ struct FestivalDetailView: View {
 								.frame(height: 160)
 						}
 					}
-					
-					// Featured Films Section
-					VStack(alignment: .leading, spacing: 12) {
-						Text("Recent Winners")
-							.font(.headline)
-							.foregroundColor(AppColors.main)
-						
-						ScrollView(.horizontal, showsIndicators: false) {
-							HStack(spacing: 16) {
-								ForEach(festival.featuredFilms) { film in
-									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
-										VStack(alignment: .leading) {
-											// Film poster
-											if let posterURL = film.posterURL {
-												Image(posterURL)
-													.resizable()
-													.aspectRatio(contentMode: .fill)
-													.frame(width: 120, height: 180)
-													.clipped()
-													.cornerRadius(8)
-											} else {
-												Rectangle()
-													.fill(Color.gray.opacity(0.2))
-													.frame(width: 120, height: 180)
-													.cornerRadius(8)
-													.overlay(
-														Image(systemName: "film")
-															.foregroundColor(.gray)
-													)
-											}
-											
-											// Film info
-											VStack(alignment: .leading, spacing: 4) {
-												Text(film.title)
-													.font(.subheadline)
-													.fontWeight(.medium)
-													.lineLimit(1)
-												
-												Text("\(film.year)")
-													.font(.caption)
-													.foregroundColor(.secondary)
-											}
-											.frame(width: 120)
-										}
-									}
-								}
-							}
-							.padding(.horizontal, 4)
-						}
-					}
 				}
 				.padding()
 			}
 		}
 		.ignoresSafeArea(edges: .top)
 		.navigationBarTitleDisplayMode(.inline)
-		.toolbar {
-			ToolbarItem(placement: .principal) {
-				EmptyView()
-			}
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Button(action: {
-					viewModel.toggleFavorite(for: festival)
-					isFavorite.toggle()
-				}) {
-					Image(systemName: isFavorite ? "heart.fill" : "heart")
-						.foregroundColor(isFavorite ? .red : .white)
-						.font(.system(size: 20))
-				}
-			}
-		}
-		.toolbarBackground(.hidden, for: .navigationBar)
-		.toolbarBackground(.visible, for: .navigationBar)
+		.toolbar(.hidden, for: .navigationBar)
 		.onAppear {
 			geocodeAddress(festival.venueAddress)
+			// Fetch TMDB posters for all featured films
+			for film in festival.featuredFilms {
+				if film.tmdbPosterPath == nil {
+					Task {
+						await viewModel.fetchTMDBPoster(for: film)
+					}
+				}
+			}
 		}
 	}
 	
@@ -300,7 +320,6 @@ struct ExpandedMapView: View {
 
 struct InfoItem: View {
 	let icon: String
-	let label: String
 	let value: String
 	
 	var body: some View {
@@ -309,15 +328,32 @@ struct InfoItem: View {
 				.font(.system(size: 20))
 				.foregroundColor(AppColors.main)
 			
-			Text(label)
-				.font(.caption)
-				.foregroundColor(.secondary)
-			
 			Text(value)
 				.font(.subheadline)
 				.fontWeight(.medium)
 		}
 		.frame(maxWidth: .infinity)
+	}
+}
+
+struct FilmPosterPlaceholder: View {
+	let title: String
+	
+	var body: some View {
+		ZStack {
+			Rectangle()
+				.fill(Color.black)
+				.frame(width: 120, height: 180)
+				.cornerRadius(8)
+			
+			VStack(spacing: 12) {
+				Image(systemName: "film")
+					.font(.system(size: 32))
+					.foregroundColor(.gray)
+				
+			}
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+		}
 	}
 }
 
