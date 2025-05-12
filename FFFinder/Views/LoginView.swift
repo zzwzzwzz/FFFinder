@@ -17,11 +17,33 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
+                
+                // App Logo
+                ZStack {
+                    // Fallback solid color background
+                    Circle()
+                        .fill(AppColors.main)
+                        .frame(width: 140, height: 140)
+                    
+                    // Attempt to display app logo
+                    Image("AppLogo")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 136, height: 136)
+                        .clipShape(Circle())
+                }
+                .overlay(
+                    Circle()
+                        .stroke(AppColors.main, lineWidth: 3)
+                        .frame(width: 140, height: 140)
+                )
+                .padding(.top, 60)
+                .padding(.bottom, 20)
 				
                 Text("Welcome to FFFinder")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-					.padding(.top, 180)
+                    .padding(.bottom, 30)
 
                 TextField("Email", text: $email)
                     .padding()
