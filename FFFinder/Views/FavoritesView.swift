@@ -10,6 +10,7 @@ import SwiftUI
 struct FavoritesView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
 	@State private var selectedTab = 0
+	@State private var showingExportSheet = false
 	
 	var body: some View {
 		NavigationStack {
@@ -19,13 +20,27 @@ struct FavoritesView: View {
 				
 				VStack(spacing: 0) {
 					// Header
-					Text("Your Favorites")
-						.font(.title)
-						.fontWeight(.bold)
-						.frame(maxWidth: .infinity, alignment: .leading)
-						.padding(.horizontal)
-						.padding(.top)
-						.padding(.bottom, 8)
+					HStack {
+						Text("Your Favorites")
+							.font(.title)
+							.fontWeight(.bold)
+						
+						Spacer()
+						
+						if selectedTab == 1 && !viewModel.favoriteFilmIds.isEmpty {
+							Button {
+								showingExportSheet = true
+							} label: {
+								Image(systemName: "square.and.arrow.up")
+									.font(.title3)
+									.foregroundColor(AppColors.main)
+							}
+						}
+					}
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.padding(.horizontal)
+					.padding(.top)
+					.padding(.bottom, 8)
 					
 					// Tab Selector
 					HStack(spacing: 0) {
@@ -55,7 +70,10 @@ struct FavoritesView: View {
 					}
 				}
 			}
-			.navigationBarHidden(true)
+			.navigationBarTitleDisplayMode(.inline)
+			.sheet(isPresented: $showingExportSheet) {
+				FilmPosterExportView(films: viewModel.getFavoriteFilms(), viewModel: viewModel)
+			}
 		}
 	}
 }
