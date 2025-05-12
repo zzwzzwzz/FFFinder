@@ -114,7 +114,7 @@ struct FilmFestival: Identifiable {
 			website: "https://www.sff.org.au",
 			location: "Sydney",
 			established: 1954,
-			imageURL: "SFF_logo",
+			imageURL: "SFF_logo2",
 			genres: ["International", "Australian", "Documentary", "Short Films"],
 			ticketPrice: "$20-25",
 			history: "Founded in 1954, the Sydney Film Festival has grown to become one of Australia's most prestigious film events, attracting filmmakers and audiences from around the world.",

@@ -28,6 +28,12 @@ struct HomeView: View {
 			.map { $0 }
 	}
 	
+	var featuredFilms: [Film] {
+		// Get all films from all festivals and sort by number of awards (popularity)
+		let allFilms = viewModel.festivals.flatMap { $0.featuredFilms }
+		return allFilms.sorted { $0.awards.count > $1.awards.count }
+	}
+	
 	var filteredFestivals: [FilmFestival] {
 		let festivals = searchText.isEmpty 
 			? viewModel.festivals 
@@ -119,15 +125,15 @@ struct HomeView: View {
 						}
 					}
 					
-					// All festivals section with More button
+					// Featured Films section with More button
 					VStack(alignment: .leading) {
 						HStack {
-							Text("All Festivals")
+							Text("Featured Films")
 								.font(.headline)
 							
 							Spacer()
 							
-							NavigationLink(destination: AllFestivalsView(viewModel: viewModel)) {
+							NavigationLink(destination: AllFestivalsView(viewModel: viewModel, initialTab: 1)) {
 								Text("More")
 									.foregroundColor(AppColors.main)
 									.font(.subheadline)
@@ -135,15 +141,19 @@ struct HomeView: View {
 						}
 						.padding(.horizontal)
 						
-						List {
-							ForEach(filteredFestivals.prefix(3)) { festival in
-								NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-									FestivalListItem(festival: festival)
+						ScrollView {
+							LazyVGrid(columns: [
+								GridItem(.flexible(), spacing: 16),
+								GridItem(.flexible(), spacing: 16)
+							], spacing: 16) {
+								ForEach(featuredFilms.prefix(4)) { film in
+									NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+										FilmGridItem(film: film, viewModel: viewModel)
+									}
 								}
-								.listRowBackground(Color("CardBackground"))
 							}
+							.padding(.horizontal)
 						}
-						.listStyle(.plain)
 					}
 				}
 			}

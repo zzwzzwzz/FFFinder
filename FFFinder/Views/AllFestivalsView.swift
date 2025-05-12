@@ -13,7 +13,12 @@ struct AllFestivalsView: View {
     @State private var selectedGenre: String?
     @State private var sortOption: SortOption = .popularity
     @State private var showFilter = false
-    @State private var selectedTab = 0
+    @State private var selectedTab: Int
+    
+    init(viewModel: FestivalsViewModel, initialTab: Int = 0) {
+        self.viewModel = viewModel
+        _selectedTab = State(initialValue: initialTab)
+    }
     
     enum SortOption: String, CaseIterable {
         case popularity = "Popularity"
