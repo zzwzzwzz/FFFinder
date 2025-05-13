@@ -10,6 +10,13 @@ import SwiftUI
 struct HomeView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
 	@State private var showSearch = false
+    @State private  var selectedDate = Date()
+    
+    var matchingFestivals: [FilmFestival] {
+        viewModel.festivals.filter {
+            $0.startDate <= selectedDate && $0.endDate >= selectedDate
+        }
+    }
 	
 	var featuredFestivals: [FilmFestival] {
 		// Only use all festivals, no searchText
@@ -46,114 +53,155 @@ struct HomeView: View {
 				Color("BackgroundColor")
 					.edgesIgnoringSafeArea(.all)
 				
-				ScrollView {
-					VStack {
-						// Header
-						HStack {
-							// App logo
-							ZStack {
-								Circle()
-									.fill(AppColors.main.opacity(0.15))
-									.frame(width: 44, height: 44)
-								Image("AppLogo")
-									.resizable()
-									.scaledToFill()
-									.frame(width: 40, height: 40)
-									.clipShape(Circle())
-							}
-							.overlay(
-								Circle()
-									.stroke(AppColors.main, lineWidth: 2)
-									.frame(width: 44, height: 44)
-							)
-							
-							Text("FFFinder")
-								.font(.title)
-								.bold(true)
-								.foregroundColor(AppColors.main)
-							
-							Spacer()
-							
-							Button(action: { showSearch = true }) {
-								Image(systemName: "magnifyingglass")
-									.font(.title2)
-									.foregroundColor(AppColors.main)
-									.padding(10)
-									.background(AppColors.background)
-									.clipShape(Circle())
-							}
-						}
-						.padding(.horizontal)
-						.padding(.top, 8)
-						
-						// Featured festivals section
-						VStack(alignment: .leading) {
-							Text("Upcoming Festivals")
-								.font(.headline)
-								.padding(.horizontal)
-								.padding(.top, 5)
-								.foregroundColor(AppColors.main)
-							
-							if featuredFestivals.isEmpty {
-								VStack(alignment: .center) {
-									Text("No upcoming festivals found")
-										.font(.subheadline)
-										.foregroundColor(.secondary)
-										.padding()
-								}
-								.frame(maxWidth: .infinity)
-								.padding(.vertical)
-							} else {
-								ScrollView(.horizontal, showsIndicators: false) {
-									HStack(spacing: 24) {
-										ForEach(featuredFestivals) { festival in
-											NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
-												UpcomingFestivalCard(festival: festival)
-											}
-											.buttonStyle(PlainButtonStyle())
-										}
-									}
-									.padding(.horizontal)
-									.padding(.vertical, 8)
-								}
-							}
-						}
-						
-						// Featured Films section with More button
-						VStack(alignment: .leading) {
-							HStack {
-								Text("Featured Films")
-									.font(.headline)
-									.foregroundColor(AppColors.main)
-								
-								Spacer()
-								
-								NavigationLink(destination: AllFestivalsView(viewModel: viewModel, initialTab: 1)) {
-									Text("More")
-										.foregroundColor(AppColors.main)
-										.font(.subheadline)
-								}
-							}
-							.padding(.horizontal)
-							.padding(.top, 5)
-							.padding(.bottom, 5)
-							
-							ScrollView {
-								LazyVGrid(columns: [
-									GridItem(.flexible(), spacing: 16),
-									GridItem(.flexible(), spacing: 16)
-								], spacing: 16) {
-									ForEach(featuredFilms.prefix(4)) { film in
-										NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
-											FilmGridItem(film: film, viewModel: viewModel)
-										}
-									}
-								}
-								.padding(.horizontal)
-							}
-						}
-					}
-				}
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack {
+                            // Header
+                            HStack {
+                                // App logo
+                                ZStack {
+                                    Circle()
+                                        .fill(AppColors.main.opacity(0.15))
+                                        .frame(width: 44, height: 44)
+                                    Image("AppLogo")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 40, height: 40)
+                                        .clipShape(Circle())
+                                }
+                                .overlay(
+                                    Circle()
+                                        .stroke(AppColors.main, lineWidth: 2)
+                                        .frame(width: 44, height: 44)
+                                )
+                                
+                                Text("FFFinder")
+                                    .font(.title)
+                                    .bold(true)
+                                    .foregroundColor(AppColors.main)
+                                
+                                Spacer()
+                                
+                                Button(action: { showSearch = true }) {
+                                    Image(systemName: "magnifyingglass")
+                                        .font(.title2)
+                                        .foregroundColor(AppColors.main)
+                                        .padding(10)
+                                        .background(AppColors.background)
+                                        .clipShape(Circle())
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.top, 8)
+                            
+                            // Featured festivals section
+                            VStack(alignment: .leading) {
+                                Text("Upcoming Festivals")
+                                    .font(.headline)
+                                    .padding(.horizontal)
+                                    .padding(.top, 5)
+                                    .foregroundColor(AppColors.main)
+                                
+                                if featuredFestivals.isEmpty {
+                                    VStack(alignment: .center) {
+                                        Text("No upcoming festivals found")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                            .padding()
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical)
+                                } else {
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack(spacing: 24) {
+                                            ForEach(featuredFestivals) { festival in
+                                                NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                                    UpcomingFestivalCard(festival: festival)
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
+                                            }
+                                        }
+                                        .padding(.horizontal)
+                                        .padding(.vertical, 8)
+                                    }
+                                }
+                            }
+                            
+                            // Featured Films section with More button
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text("Featured Films")
+                                        .font(.headline)
+                                        .foregroundColor(AppColors.main)
+                                    
+                                    Spacer()
+                                    
+                                    NavigationLink(destination: AllFestivalsView(viewModel: viewModel, initialTab: 1)) {
+                                        Text("More")
+                                            .foregroundColor(AppColors.main)
+                                            .font(.subheadline)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                .padding(.top, 5)
+                                .padding(.bottom, 5)
+                                
+                                ScrollView {
+                                    LazyVGrid(columns: [
+                                        GridItem(.flexible(), spacing: 16),
+                                        GridItem(.flexible(), spacing: 16)
+                                    ], spacing: 16) {
+                                        ForEach(featuredFilms.prefix(4)) { film in
+                                            NavigationLink(destination: FilmDetailView(film: film, viewModel: viewModel)) {
+                                                FilmGridItem(film: film, viewModel: viewModel)
+                                            }
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                            .padding(.bottom, 5)
+                            
+                            VStack(alignment:.leading) {
+                                Text("Browse by Date")
+                                    .font(.headline)
+                                    .padding(.horizontal)
+                                    .padding(.top, 10)
+                                    .foregroundColor(AppColors.main)
+                                
+                                DatePicker("Select a date", selection: $selectedDate,  displayedComponents: .date)
+                                    .datePickerStyle(GraphicalDatePickerStyle())
+                                    .padding(.horizontal)
+                                
+                                if matchingFestivals.isEmpty {
+                                    Text("No festivals on this date.")
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal)
+                                        .padding(.bottom,  100)
+                                } else {
+                                    VStack(spacing: 12) {
+                                        ForEach(matchingFestivals) { festival in
+                                            NavigationLink(destination: FestivalDetailView(festival: festival, viewModel: viewModel)) {
+                                                CalendarCard(festival: festival)
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(minHeight: 200)
+                            .animation(.easeInOut(duration: 0.3), value: matchingFestivals.count)
+                        }
+                        .id("calendarSection")  // Scroll to Card
+                    }
+                    .onChange(of: selectedDate)  {
+                        if !matchingFestivals.isEmpty {
+                            withAnimation {
+                                proxy.scrollTo("calendarSection", anchor: .bottom)
+                            }
+                        }
+                    }
+                }
 			}
 			.navigationBarHidden(true)
 			// Present SearchView when search icon tapped
