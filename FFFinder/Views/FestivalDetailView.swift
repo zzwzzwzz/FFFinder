@@ -336,7 +336,7 @@ struct InfoItem: View {
 	}
 }
 
-struct FilmPosterPlaceholder: View {
+struct Placeholder: View {
 	let title: String
 	
 	var body: some View {

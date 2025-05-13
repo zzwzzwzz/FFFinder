@@ -11,6 +11,7 @@ struct HomeView: View {
 	@ObservedObject var viewModel: FestivalsViewModel
 	@State private var showSearch = false
     @State private  var selectedDate = Date()
+    @State private var isDateOutOfRange = false
     
     var matchingFestivals: [FilmFestival] {
         viewModel.festivals.filter {
@@ -169,15 +170,57 @@ struct HomeView: View {
                                     .padding(.top, 10)
                                     .foregroundColor(AppColors.main)
                                 
-                                DatePicker("Select a date", selection: $selectedDate,  displayedComponents: .date)
-                                    .datePickerStyle(GraphicalDatePickerStyle())
-                                    .padding(.horizontal)
+                                VStack(spacing: 8) {
+                                    DatePicker("Select a date", selection: $selectedDate, displayedComponents: .date)
+                                        .datePickerStyle(GraphicalDatePickerStyle())
+                                        .padding(.horizontal)
+                                        .onChange(of: selectedDate) { oldValue, newValue in
+                                            // Validate date range (don't allow dates too far in the future or past)
+                                            validateSelectedDate()
+                                        }
+                                    
+                                    // Date validation message
+                                    if isDateOutOfRange {
+                                        Text("This date is outside festival date ranges (showing current festivals anyway)")
+                                            .font(.caption)
+                                            .foregroundColor(.orange)
+                                            .padding(.horizontal)
+                                    }
+                                }
                                 
                                 if matchingFestivals.isEmpty {
-                                    Text("No festivals on this date.")
-                                        .foregroundColor(.secondary)
-                                        .padding(.horizontal)
-                                        .padding(.bottom,  100)
+                                    VStack(spacing: 8) {
+                                        Text("No festivals on this date.")
+                                            .foregroundColor(.secondary)
+                                            .padding(.horizontal)
+                                        
+                                        // Suggest nearest festival
+                                        if let nearestFestival = nearestUpcomingFestival {
+                                            VStack(alignment: .leading) {
+                                                Text("Suggestion:")
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                                    .padding(.horizontal)
+                                                
+                                                Button(action: {
+                                                    withAnimation {
+                                                        selectedDate = nearestFestival.startDate
+                                                    }
+                                                }) {
+                                                    HStack {
+                                                        Text("Try \(formattedDate(nearestFestival.startDate))")
+                                                            .font(.subheadline)
+                                                            .foregroundColor(AppColors.main)
+                                                        
+                                                        Image(systemName: "arrow.right.circle.fill")
+                                                            .foregroundColor(AppColors.main)
+                                                    }
+                                                    .padding(.horizontal)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .padding(.bottom, 100)
                                 } else {
                                     VStack(spacing: 12) {
                                         ForEach(matchingFestivals) { festival in
@@ -194,7 +237,7 @@ struct HomeView: View {
                         }
                         .id("calendarSection")  // Scroll to Card
                     }
-                    .onChange(of: selectedDate)  {
+                    .onChange(of: selectedDate) { oldValue, newValue in
                         if !matchingFestivals.isEmpty {
                             withAnimation {
                                 proxy.scrollTo("calendarSection", anchor: .bottom)
@@ -209,6 +252,30 @@ struct HomeView: View {
 				SearchView(viewModel: viewModel)
 			}
 		}
+	}
+	
+	private func validateSelectedDate() {
+		let today = Date()
+		let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: today)!
+		let oneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: today)!
+		
+		if selectedDate < oneYearAgo || selectedDate > oneYearFromNow {
+			isDateOutOfRange = true
+		} else {
+			isDateOutOfRange = false
+		}
+	}
+	
+	private var nearestUpcomingFestival: FilmFestival? {
+		let today = Date()
+		let upcomingFestivals = viewModel.festivals.filter { $0.startDate >= today }
+		return upcomingFestivals.min(by: { $0.startDate < $1.startDate })
+	}
+	
+	private func formattedDate(_ date: Date) -> String {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .medium
+		return formatter.string(from: date)
 	}
 }
 
