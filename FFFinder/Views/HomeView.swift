@@ -175,7 +175,7 @@ struct HomeView: View {
                                         .datePickerStyle(GraphicalDatePickerStyle())
                                         .padding(.horizontal)
                                         .onChange(of: selectedDate) { oldValue, newValue in
-                                            // Validate date range (don't allow dates too far in the future or past)
+                                            // Validate date range
                                             validateSelectedDate()
                                         }
                                     

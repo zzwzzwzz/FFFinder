@@ -17,6 +17,7 @@ class TMDBService {
         self.apiKey = "209a107f860379b817348998d5e9ca2c"
     }
     
+	//Search the movie name in TMDB database
     func searchMovie(title: String) async throws -> TMDBMovie? {
         let encodedTitle = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? title
         let urlString = "\(baseURL)/search/movie?api_key=\(apiKey)&query=\(encodedTitle)"

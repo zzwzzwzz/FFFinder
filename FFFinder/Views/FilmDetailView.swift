@@ -99,6 +99,7 @@ struct FilmDetailView: View {
                     }
                     .padding(.top, topSafeAreaInset)
                     .frame(width: UIScreen.main.bounds.width)
+					
                     // Film title at bottom
                     VStack {
                         Spacer()
@@ -173,6 +174,7 @@ struct FilmDetailView: View {
                                 }
                                 .buttonStyle(AwardButtonStyle())
                             } else {
+								
                                 // Fallback to external link if festival not found
                                 Link(destination: URL(string: award.festivalURL)!) {
                                     VStack(alignment: .leading, spacing: 4) {
