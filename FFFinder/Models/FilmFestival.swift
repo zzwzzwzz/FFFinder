@@ -25,7 +25,7 @@ struct FilmFestival: Identifiable {
 	var featuredFilms: [Film]
 	let venueAddress: String
 	
-	// Computed property to get start date from dateRange
+	// Get start date from dateRange
 	var startDate: Date {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "MMMM d"
@@ -56,7 +56,7 @@ struct FilmFestival: Identifiable {
 		return formatter.date(from: fullDateString) ?? Date()
 	}
 	
-	// Computed property to get end date from dateRange
+	// Get end date from dateRange
 	var endDate: Date {
 		let formatter = DateFormatter()
 		let delimiters = ["-", "–"]
@@ -99,7 +99,7 @@ struct FilmFestival: Identifiable {
 		return formatter.date(from: fullEndDateString) ?? startDate
 	}
 	
-	// Computed property to determine if the festival is upcoming
+	// Determine if the festival is upcoming
 	var isUpcoming: Bool {
 		let now = Date()
 		// A festival is considered upcoming if its end date is in the future

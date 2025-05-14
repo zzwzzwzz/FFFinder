@@ -274,7 +274,7 @@ struct FilmListItem: View {
 				AsyncImage(url: posterURL) { phase in
 					switch phase {
 					case .empty:
-						FilmPosterPlaceholder(title: film.title)
+						MediaPlaceholder.filmPoster(title: film.title)
 					case .success(let image):
 						image
 							.resizable()
@@ -283,13 +283,13 @@ struct FilmListItem: View {
 							.clipped()
 							.cornerRadius(8)
 					case .failure:
-						FilmPosterPlaceholder(title: film.title)
+						MediaPlaceholder.filmPoster(title: film.title)
 					@unknown default:
 						EmptyView()
 					}
 				}
 			} else {
-				FilmPosterPlaceholder(title: film.title)
+				MediaPlaceholder.filmPoster(title: film.title)
 			}
 			VStack(alignment: .leading, spacing: 4) {
 				Text(film.title)
@@ -333,28 +333,6 @@ struct EmptySearchPlaceholder: View {
 					.foregroundColor(.gray)
 			}
 			Spacer()
-		}
-	}
-}
-
-// Film poster placeholder
-struct FilmPosterPlaceholder: View {
-	let title: String
-	var body: some View {
-		ZStack {
-			Rectangle()
-				.fill(Color.gray.opacity(0.2))
-				.frame(width: 50, height: 75)
-				.cornerRadius(8)
-			
-			VStack {
-				Image(systemName: "film")
-					.foregroundColor(.gray)
-				
-				Text(title.prefix(1))
-					.font(.caption)
-					.foregroundColor(.gray)
-			}
 		}
 	}
 }

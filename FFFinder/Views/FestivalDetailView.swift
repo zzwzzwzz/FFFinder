@@ -169,7 +169,7 @@ struct FestivalDetailView: View {
 												AsyncImage(url: posterURL) { phase in
 													switch phase {
 													case .empty:
-														FilmPosterPlaceholder(title: film.title)
+														MediaPlaceholder.filmPosterMedium(title: film.title)
 													case .success(let image):
 														image
 															.resizable()
@@ -178,13 +178,13 @@ struct FestivalDetailView: View {
 															.clipped()
 															.cornerRadius(8)
 													case .failure:
-														FilmPosterPlaceholder(title: film.title)
+														MediaPlaceholder.filmPosterMedium(title: film.title)
 													@unknown default:
 														EmptyView()
 													}
 												}
 											} else {
-												FilmPosterPlaceholder(title: film.title)
+												MediaPlaceholder.filmPosterMedium(title: film.title)
 											}
 											
 											// Film info
@@ -333,27 +333,6 @@ struct InfoItem: View {
 				.fontWeight(.medium)
 		}
 		.frame(maxWidth: .infinity)
-	}
-}
-
-struct Placeholder: View {
-	let title: String
-	
-	var body: some View {
-		ZStack {
-			Rectangle()
-				.fill(Color.black)
-				.frame(width: 120, height: 180)
-				.cornerRadius(8)
-			
-			VStack(spacing: 12) {
-				Image(systemName: "film")
-					.font(.system(size: 32))
-					.foregroundColor(.gray)
-				
-			}
-			.frame(maxWidth: .infinity, maxHeight: .infinity)
-		}
 	}
 }
 

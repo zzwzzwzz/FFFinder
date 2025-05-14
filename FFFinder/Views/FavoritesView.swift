@@ -180,15 +180,7 @@ struct FestivalsGridItem: View {
 					.clipped()
 					.cornerRadius(12)
 			} else {
-				Rectangle()
-					.fill(Color.gray.opacity(0.2))
-					.frame(height: 160)
-					.cornerRadius(12)
-					.overlay(
-						Image(systemName: "film")
-							.font(.system(size: 40))
-							.foregroundColor(.gray)
-					)
+				MediaPlaceholder.festival()
 			}
 			
 			// Festival Info
@@ -235,7 +227,7 @@ struct FilmGridItem: View {
 				AsyncImage(url: posterURL) { phase in
 					switch phase {
 					case .empty:
-						FilmPosterPlaceholder(title: film.title)
+						MediaPlaceholder.filmPosterLarge(title: film.title)
 					case .success(let image):
 						image
 							.resizable()
@@ -244,13 +236,13 @@ struct FilmGridItem: View {
 							.clipped()
 							.cornerRadius(12)
 					case .failure:
-						FilmPosterPlaceholder(title: film.title)
+						MediaPlaceholder.filmPosterLarge(title: film.title)
 					@unknown default:
 						EmptyView()
 					}
 				}
 			} else {
-				FilmPosterPlaceholder(title: film.title)
+				MediaPlaceholder.filmPosterLarge(title: film.title)
 			}
 			
 			// Film Info
@@ -289,26 +281,6 @@ struct FilmGridItem: View {
 					await viewModel.fetchTMDBPoster(for: film)
 				}
 			}
-		}
-	}
-}
-
-struct PosterPlaceholder: View {
-	let title: String
-	
-	var body: some View {
-		ZStack {
-			Rectangle()
-				.fill(Color.black)
-				.frame(height: 160)
-				.cornerRadius(12)
-			
-			VStack(spacing: 12) {
-				Image(systemName: "film")
-					.font(.system(size: 32))
-					.foregroundColor(.gray)
-			}
-			.frame(maxWidth: .infinity, maxHeight: .infinity)
 		}
 	}
 }

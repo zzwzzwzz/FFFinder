@@ -228,7 +228,7 @@ private struct StaticPostersGridView: View {
                                 .cornerRadius(12)
                                 .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
                         } else {
-                            MoviePosterPlaceholder()
+                            MediaPlaceholder.filmPosterLarge(title: film.title)
                         }
                         
                         Text(film.title)
@@ -247,26 +247,5 @@ private struct StaticPostersGridView: View {
         }
         .frame(width: 400)
         .background(Color.white)
-    }
-}
-
-private struct MoviePosterPlaceholder: View {
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(width: 160, height: 240)
-                .cornerRadius(12)
-            
-            VStack(spacing: 8) {
-                Image(systemName: "film")
-                    .font(.system(size: 32))
-                    .foregroundColor(.gray)
-                
-                Text("No Poster")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-        }
     }
 } 
