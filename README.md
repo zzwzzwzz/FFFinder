@@ -3,7 +3,7 @@
 ## Links
 
 - GitHub: [https://github.com/zzwzzwzz/FFFinder](https://github.com/zzwzzwzz/FFFinder)
-- YouTube: [https://youtube.com/shorts/CIIt9HcDG1k] (https://youtube.com/shorts/CIIt9HcDG1k)
+- YouTube: [https://youtube.com/shorts/CIIt9HcDG1k](https://youtube.com/shorts/CIIt9HcDG1k)
 
 ## Intro
 
